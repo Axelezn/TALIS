@@ -1,0 +1,19 @@
+{
+  "name": "talis",
+  "version": "1.0.0",
+  "description": "*Documentation spécifique au back-end*",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Axelezn/TALIS.git"
+  },
+  "author": "Axel, Gabin",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/Axelezn/TALIS/issues"
+  },
+  "homepage": "https://github.com/Axelezn/TALIS#readme"
+}
