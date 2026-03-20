@@ -1,1 +1,0 @@
-# Classes de base, constantes globales, utilitaires

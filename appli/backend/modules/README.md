@@ -1,1 +1,0 @@
-# Découpage par domaine métier

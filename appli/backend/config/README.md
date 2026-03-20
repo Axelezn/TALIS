@@ -1,1 +1,0 @@
-# Configuration (DB, variables d'environnement)
