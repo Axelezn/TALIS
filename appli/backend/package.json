@@ -1,5 +1,5 @@
 {
-  "name": "talis",
+  "name": "talis-backend",
   "version": "1.0.0",
   "description": "*Documentation spécifique au back-end*",
   "main": "index.js",
@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Axelezn/TALIS/issues"
   },
-  "homepage": "https://github.com/Axelezn/TALIS#readme"
+  "homepage": "https://github.com/Axelezn/TALIS#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
 }
