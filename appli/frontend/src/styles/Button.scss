@@ -1,0 +1,71 @@
+@import 'variables';
+@import 'mixins';
+
+// --- MIXIN DE COMPORTEMENT DES BOUTONS ---
+@mixin button-behavior($bg-color, $text-color) {
+  background-color: $bg-color;
+  color: $text-color;
+  box-shadow: 0 4px 15px rgba($bg-color, 0.15);
+
+  // 1. ÉTAT : HOVER (Survol)
+  &:hover:not(:disabled) {
+    background-color: darken($bg-color, 8%);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba($bg-color, 0.35);
+  }
+
+  // 2. ÉTAT : ONCLICK (Active)
+  &:active:not(:disabled) {
+    background-color: darken($bg-color, 12%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba($bg-color, 0.25);
+    transition: all 0.1s ease;
+  }
+}
+
+// --- CLASSE PRINCIPALE ---
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: $font-main;
+  font-weight: $weight-semibold;
+  border: none;
+  cursor: pointer;
+  border-radius: $radius-lg;
+  white-space: nowrap;
+  
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // --- RESPONSIVE ---
+  width: 100%;
+  padding: 14px 20px;
+  @include responsive-font(1rem, 1.05rem);
+
+  @media (min-width: $tablet) {
+    width: auto;
+    padding: 10px 28px;
+  }
+
+  // --- LES 3 VARIANTES COLORÉES ---
+
+  &--primary {
+    @include button-behavior($color-primary, $color-white);
+  }
+
+  &--accent {
+    @include button-behavior($color-accent, $color-text-main);
+  }
+
+  &--status {
+    @include button-behavior($color-status, $color-text-main);
+  }
+
+  &:disabled {
+    background-color: #ccc;
+    color: #888;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+}
