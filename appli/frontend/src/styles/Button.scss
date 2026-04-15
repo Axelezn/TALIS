@@ -2,25 +2,24 @@
 @import 'mixins';
 
 // --- MIXIN DE COMPORTEMENT DES BOUTONS ---
-// Ce mixin gère les 3 états pour n'importe quelle couleur
 @mixin button-behavior($bg-color, $text-color) {
   background-color: $bg-color;
   color: $text-color;
-  box-shadow: 0 4px 15px rgba($bg-color, 0.15); // Ombre discrète par défaut
+  box-shadow: 0 4px 15px rgba($bg-color, 0.15);
 
   // 1. ÉTAT : HOVER (Survol)
   &:hover:not(:disabled) {
     background-color: darken($bg-color, 8%);
-    transform: translateY(-3px); // Le bouton monte
-    box-shadow: 0 8px 25px rgba($bg-color, 0.35); // L'ombre s'accentue
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba($bg-color, 0.35);
   }
 
   // 2. ÉTAT : ONCLICK (Active)
   &:active:not(:disabled) {
     background-color: darken($bg-color, 12%);
-    transform: translateY(-1px); // Le bouton s'enfonce (mais reste un peu au-dessus du sol)
+    transform: translateY(-1px);
     box-shadow: 0 4px 10px rgba($bg-color, 0.25);
-    transition: all 0.1s ease; // Plus rapide au clic pour le feedback
+    transition: all 0.1s ease;
   }
 }
 
