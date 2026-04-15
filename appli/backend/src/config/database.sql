@@ -1,32 +1,77 @@
--- Création de la base de données
-CREATE DATABASE IF NOT EXISTS room_booking_system;
-USE room_booking_system;
+CREATE DATABASE IF NOT EXISTS talis;
+USE talis;
 
--- Table des salles
--- On utilise UNSIGNED pour la capacité car une capacité négative est une aberration logique.
-CREATE TABLE IF NOT EXISTS rooms (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL UNIQUE,
-    capacity INT UNSIGNED NOT NULL
-) ENGINE=InnoDB;
+CREATE TABLE IF NOT EXISTS document (
+    id_document INT(11) NOT NULL AUTO_INCREMENT,
+    nom VARCHAR(255) NULL,
+    path VARCHAR(255) NULL,
+    PRIMARY KEY (id_document)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Table des réservations
--- L'index UNIQUE sur (room_id, date, start_hour) est CRUCIAL.
--- Il empêche physiquement d'avoir deux réservations pour la même salle au même moment.
-CREATE TABLE IF NOT EXISTS bookings (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    room_id INT NOT NULL,
-    customer_name VARCHAR(150) NOT NULL,
-    booking_date DATE NOT NULL,
-    start_hour TINYINT UNSIGNED NOT NULL CHECK (start_hour BETWEEN 0 AND 23),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
-    -- Contrainte d'intégrité référentielle
-    CONSTRAINT fk_room
-        FOREIGN KEY (room_id) 
-        REFERENCES rooms(id)
-        ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS entreprise (
+    id_entreprise INT(11) NOT NULL AUTO_INCREMENT,
+    nom VARCHAR(50) NULL,
+    adresse_complete VARCHAR(255) NULL,
+    numero_rue INT(11) NULL,
+    code_postal INT(11) NULL,
+    ville VARCHAR(255) NULL,
+    certif TINYINT(1) NULL,
+    PRIMARY KEY (id_entreprise)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-    -- Contrainte d'unicité métier : une salle, une date, une heure = une seule ligne possible
-    UNIQUE KEY unique_booking_slot (room_id, booking_date, start_hour)
-) ENGINE=InnoDB;
+CREATE TABLE IF NOT EXISTS offre (
+    id_offre INT(11) NOT NULL AUTO_INCREMENT,
+    type VARCHAR(50) NULL,
+    titre VARCHAR(200) NULL,
+    date_send DATE NULL,
+    date_stop DATE NULL,
+    remuneration DOUBLE NULL,
+    description TEXT NULL,
+    PRIMARY KEY (id_offre)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS `user` (
+    id_user INT(11) NOT NULL AUTO_INCREMENT,
+    nom VARCHAR(50) NULL,
+    prenom VARCHAR(50) NULL,
+    ddn DATE NULL,
+    mail VARCHAR(100) NULL,
+    tel VARCHAR(60) NULL,
+    certif TINYINT(1) NULL,
+    id_document INT(11) NULL,
+    PRIMARY KEY (id_user),
+    KEY fk_user_document (id_document),
+    CONSTRAINT fk_user_document FOREIGN KEY (id_document) REFERENCES document(id_document)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS recruteur (
+    id_recruteur INT(11) NOT NULL AUTO_INCREMENT,
+    id_entreprise INT(11) NOT NULL,
+    nom VARCHAR(50) NULL,
+    prenom VARCHAR(50) NULL,
+    ddn DATE NULL,
+    mail VARCHAR(100) NULL,
+    tel VARCHAR(60) NULL,
+    certif TINYINT(1) NULL,
+    id_document INT(11) NULL,
+    id_offre INT(11) NULL,
+    PRIMARY KEY (id_recruteur),
+    KEY fk_recruteur_entreprise (id_entreprise),
+    KEY fk_recruteur_document (id_document),
+    KEY fk_recruteur_offre (id_offre),
+    CONSTRAINT fk_recruteur_entreprise FOREIGN KEY (id_entreprise) REFERENCES entreprise(id_entreprise),
+    CONSTRAINT fk_recruteur_document FOREIGN KEY (id_document) REFERENCES document(id_document),
+    CONSTRAINT fk_recruteur_offre FOREIGN KEY (id_offre) REFERENCES offre(id_offre)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS demande (
+    id_demande INT(11) NOT NULL AUTO_INCREMENT,
+    id_user INT(11) NOT NULL,
+    id_offre INT(11) NOT NULL,
+    demande VARCHAR(100) NULL,
+    PRIMARY KEY (id_demande),
+    UNIQUE KEY uq_demande_user_offre (id_user, id_offre),
+    KEY fk_demande_offre (id_offre),
+    CONSTRAINT fk_demande_offre FOREIGN KEY (id_offre) REFERENCES offre(id_offre),
+    CONSTRAINT fk_demande_user FOREIGN KEY (id_user) REFERENCES `user`(id_user)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

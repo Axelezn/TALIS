@@ -2,8 +2,11 @@
   "name": "talis-backend",
   "version": "1.0.0",
   "description": "*Documentation spécifique au back-end*",
-  "main": "index.js",
+  "type": "module",
+  "main": "src/app.js",
   "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
     "test": "jest"
   },
   "repository": {
@@ -17,6 +20,11 @@
   },
   "homepage": "https://github.com/Axelezn/TALIS#readme",
   "dependencies": {
-    "express": "^5.2.1"
+    "dotenv": "^16.4.7",
+    "express": "^5.2.1",
+    "mysql2": "^3.14.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }
