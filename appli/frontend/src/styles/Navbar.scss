@@ -1,0 +1,57 @@
+@import './variables';
+@import './mixins';
+
+.navbar {
+  background-color: $color-white;
+  border-bottom: 1px solid $color-border;
+  position: sticky;
+  top: 0;
+
+  &__container {
+    @include flex-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+  }
+
+  &__logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    
+    span {
+      color: $color-primary; // Le "T" en bleu
+    }
+  }
+
+  &__links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+
+    a {
+      text-decoration: none;
+      color: $color-text-main;
+      font-weight: 500;
+
+      &:hover {
+        color: $color-primary;
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 1rem;
+
+    .btn-signup {
+      @include btn-base;
+      background-color: $color-accent;
+      color: $color-white;
+
+      &:hover {
+        filter: brightness(1.1);
+        transform: translateY(-1px);
+      }
+    }
+  }
+}

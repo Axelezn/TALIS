@@ -1,0 +1,32 @@
+// --- Palette Triadique TALIS ---
+$color-primary: #B9AAF9;
+$color-accent: #E7FE53;
+$color-status: #77DDCF;
+
+// --- Neutres (Règle du 60-30-10) ---
+$color-bg: #E7E7E7;         // Fond de page (Gris très clair)
+$color-white: #FFFFFF;      // Fond des cartes et composants
+$color-text-main: #2D3436;  // Texte principal
+$color-text-light: #636E72; // Texte secondaire / légendes
+$color-border: #DFE6E9;
+
+// --- TYPOGRAPHIES ---
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+$font-main: 'Poppins', sans-serif;
+$font-secondary: 'Montserrat', sans-serif;
+// --- FONT WEIGHTS ---
+$weight-regular: 400;
+$weight-medium: 500;
+$weight-semibold: 600;
+$weight-bold: 700;
+$weight-black: 800;
+// --- Breakpoints (Responsive) ---
+$tablet: 768px;
+$desktop: 1024px;
+
+// --- Shadow & Radius ---
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.08);

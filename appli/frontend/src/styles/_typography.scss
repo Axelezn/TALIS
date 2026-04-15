@@ -1,0 +1,31 @@
+@import 'variables';
+@import 'mixins';
+
+// Styles Globaux
+body, p,li, a {
+  font-family: $font-secondary;
+  font-weight: $weight-regular;
+  line-height: 1.6; 
+  @include responsive-font(0.95rem, 1.05rem); 
+}
+
+// Titres (Poppins)
+h1, .h1-style {
+  font-family: $font-main;
+  font-weight: $weight-black;
+  line-height: 1.2;
+  @include responsive-font(2rem, 3.5rem);
+}
+
+h2, .h2-style {
+  font-family: $font-main;
+  font-weight: $weight-semibold;
+  @include responsive-font(1.5rem, 2.2rem);
+}
+.text-italic { font-style: italic; }
+.text-bold { font-weight: $weight-bold; }
+.text-semibold { font-weight: $weight-semibold; }
+.text-small {
+  font-size: 0.85rem;
+  color: $color-text-light;
+}

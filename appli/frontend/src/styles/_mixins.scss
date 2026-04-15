@@ -1,0 +1,34 @@
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin card-style {
+  background: $color-white;
+  border-radius: $radius-md;
+  box-shadow: $shadow-soft;
+  padding: 20px;
+}
+
+@mixin btn-base {
+  padding: 10px 20px;
+  border-radius: $radius-sm;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+@mixin responsive-font($mob-size, $desk-size) {
+  font-size: $mob-size;
+
+  @media (min-width: $tablet) {
+    font-size: $desk-size;
+  }
+}
