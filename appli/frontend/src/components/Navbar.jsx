@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { Bell, Menu, X } from 'lucide-react';
+// Importation de Link pour la navigation interne sans rechargement
+import { Link } from 'react-router-dom'; 
 import logo from '../assets/talis_logo_full.png';
 import Button from './Button'; 
 import '../styles/Navbar.scss';
 
 const Navbar = () => {
-  // État pour ouvrir/fermer le menu mobile
   const [isOpen, setIsOpen] = useState(false);
-
-  // true = point rouge visible, false = point rouge masqué
   const hasNotifications = true; 
 
   return (
@@ -18,51 +17,56 @@ const Navbar = () => {
       <nav className="nav-desktop">
         <div className="nav-desktop__container">
           
-          {/* 1. Bloc Gauche : Logo */}
+          {/* 1. Bloc Gauche : Logo avec Link vers l'accueil */}
           <div className="nav-desktop__logo">
-            <a href="/">
+            <Link to="/">
               <img src={logo} alt="Talis Logo" />
-            </a>
+            </Link>
           </div>
           
-          {/* 2. Bloc Milieu : Liens de navigation */}
+          {/* 2. Bloc Milieu : Navigation interne */}
           <ul className="nav-desktop__links">
-            <li><a href="/">Accueil</a></li>
-            <li><a href="/offres">Offres</a></li>
-            <li><a href="/dashboard">Tableau de bord</a></li>
+            <li><Link to="/">Accueil</Link></li>
+            <li><Link to="/offres">Offres</Link></li>
+            <li><Link to="/dashboard">Tableau de bord</Link></li>
           </ul>
 
-          {/* 3. Bloc Droite : Boutons d'action */}
+          {/* 3. Bloc Droite : Actions avec redirection vers LoginView */}
           <div className="nav-desktop__actions">
-            <Button variant="accent">Connexion</Button>
-            <Button variant="primary">Inscription</Button>
+            {/* On entoure le bouton avec un Link vers /login */}
+            <Link to="/login">
+              <Button variant="accent">Connexion</Button>
+            </Link>
+            
+            <Link to="/register">
+              <Button variant="primary">Inscription</Button>
+            </Link>
           </div>
 
         </div>
       </nav>
 
-      {/* --- VERSION MOBILE (Barre du haut) --- */}
+      {/* --- VERSION MOBILE --- */}
       <nav className="nav-mobile">
         <div className="nav-mobile__bell">
           <Bell size={32} />
           {hasNotifications && <span className="dot"></span>}
         </div>
 
-        {/* Logo centré */}
         <div className="nav-mobile__logo">
-          <img src={logo} alt="Talis" />
+          <Link to="/">
+            <img src={logo} alt="Talis" />
+          </Link>
         </div>
 
-        {/* Bouton Burger */}
         <button className="nav-mobile__burger" onClick={() => setIsOpen(true)}>
           <Menu size={28} />
         </button>
       </nav>
 
-      {/* --- MENU MOBILE OVERLAY (Le menu violet qui s'ouvre) --- */}
+      {/* --- MENU MOBILE OVERLAY --- */}
       <div className={`mobile-overlay ${isOpen ? 'is-active' : ''}`}>
         
-        {/* Bouton pour fermer */}
         <button className="mobile-overlay__close" onClick={() => setIsOpen(false)}>
           <X size={32} color="white" />
         </button>
@@ -72,21 +76,20 @@ const Navbar = () => {
             <img src={logo} alt="Talis" />
           </div>
 
-          {/* Liste des liens mobile */}
           <ul className="mobile-overlay__links">
-            <li><a href="/" onClick={() => setIsOpen(false)}>Accueil</a></li>
-            <li><a href="/offres" onClick={() => setIsOpen(false)}>Offres</a></li>
-            <li><a href="/dashboard" onClick={() => setIsOpen(false)}>Tableau de bord</a></li>
+            <li><Link to="/" onClick={() => setIsOpen(false)}>Accueil</Link></li>
+            <li><Link to="/offres" onClick={() => setIsOpen(false)}>Offres</Link></li>
+            <li><Link to="/dashboard" onClick={() => setIsOpen(false)}>Tableau de bord</Link></li>
             
-            {/* Petit trait de séparation */}
             <li className="sep"></li>
             
             <li>
-              <a href="/login" className="bold uppercase" onClick={() => setIsOpen(false)}>
+              {/* Lien direct vers LoginView en Mobile */}
+              <Link to="/login" className="bold uppercase" onClick={() => setIsOpen(false)}>
                 CONNEXION
-              </a>
+              </Link>
             </li>
-            <li><a href="/register" onClick={() => setIsOpen(false)}>Inscription</a></li>
+            <li><Link to="/register" onClick={() => setIsOpen(false)}>Inscription</Link></li>
           </ul>
 
         </div>

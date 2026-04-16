@@ -1,14 +1,6 @@
-@import 'variables';
-@import 'mixins';
-@import 'typography';
+@use 'typography';
 
-
-
-// Exemple de style global
 body {
-  background-color: $color-bg;
-  color: $color-text-main;
-  font-family: 'Poppins', sans-serif;
   margin: 0;
   -webkit-font-smoothing: antialiased;
 }

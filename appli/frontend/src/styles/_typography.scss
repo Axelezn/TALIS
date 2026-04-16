@@ -1,15 +1,13 @@
-@import 'variables';
-@import 'mixins';
+@use 'variables' as *;
+@use 'mixins' as *;
 
-// Styles Globaux
-body, p,li, a {
+body, p, li, a {
   font-family: $font-secondary;
   font-weight: $weight-regular;
   line-height: 1.6; 
   @include responsive-font(0.95rem, 1.05rem); 
 }
 
-// Titres (Poppins)
 h1, .h1-style {
   font-family: $font-main;
   font-weight: $weight-black;
@@ -22,6 +20,7 @@ h2, .h2-style {
   font-weight: $weight-semibold;
   @include responsive-font(1.5rem, 2.2rem);
 }
+
 .text-italic { font-style: italic; }
 .text-bold { font-weight: $weight-bold; }
 .text-semibold { font-weight: $weight-semibold; }

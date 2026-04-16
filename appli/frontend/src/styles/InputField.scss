@@ -1,0 +1,51 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.input-field-container {
+  margin-bottom: 20px;
+  text-align: left;
+
+  .input-label {
+    display: block;
+    margin-bottom: 8px;
+    font-family: $font-secondary;
+    font-weight: $weight-semibold;
+    color: $color-text-main;
+    font-size: 0.9rem;
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .custom-input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid $color-border;
+      border-radius: $radius-md;
+      font-family: $font-secondary;
+      background: $color-white;
+      transition: border-color 0.3s ease;
+
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+      }
+
+      &::placeholder {
+        color: $color-text-light;
+      }
+    }
+
+    .password-toggle-btn {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      color: $color-text-light;
+      cursor: pointer;
+      @include flex-center;
+    }
+  }
+}

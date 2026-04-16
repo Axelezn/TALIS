@@ -1,3 +1,5 @@
+@use 'variables' as *;
+
 @mixin flex-center {
   display: flex;
   justify-content: center;
@@ -25,9 +27,9 @@
   transition: all 0.3s ease;
   border: none;
 }
+
 @mixin responsive-font($mob-size, $desk-size) {
   font-size: $mob-size;
-
   @media (min-width: $tablet) {
     font-size: $desk-size;
   }
