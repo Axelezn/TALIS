@@ -1,0 +1,81 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.auth-page {
+  min-height: calc(100vh - 80px); 
+  background-color: $color-bg;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  justify-content: flex-start; 
+
+
+  padding-top: 15px; 
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 40px;
+
+  .auth-card {
+    @include card-style;
+    width: 100%;
+    max-width: 400px;
+    padding: 15px;
+    border-radius: 24px;
+    text-align: center;
+
+    .brand {
+      @include flex-center;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 25px;
+
+      img { 
+        width: 10em;
+        height: auto; 
+      }
+      h1 { margin: 0; }
+    }
+
+    .tabs {
+      display: flex;
+      background: #F1F1F1;
+      padding: 4px;
+      border-radius: $radius-md;
+      margin-bottom: 25px;
+      gap: 4px;
+
+      .tab {
+        flex: 1;
+        padding: 10px;
+        text-decoration: none;
+        color: $color-text-light;
+        font-weight: $weight-medium;
+        border-radius: $radius-sm;
+        transition: 0.3s;
+        font-size: 0.9rem;
+
+        &.active {
+          background: $color-white;
+          color: $color-text-main;
+          box-shadow: $shadow-soft;
+        }
+      }
+    }
+    .btn {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .forgot-password {
+      display: block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: $color-text-light;
+      font-size: 0.85rem;
+      transition: color 0.3s;
+
+      &:hover { color: $color-primary; }
+    }
+  }
+}
