@@ -1,6 +1,5 @@
 @use 'sass:color';
-@use 'variables' as *;
-@use 'mixins' as *;
+@use '../../../styles/abstracts' as *;
 
 @mixin button-behavior($bg-color, $text-color) {
   background-color: $bg-color;

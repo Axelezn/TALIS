@@ -1,5 +1,4 @@
-@use 'variables' as *;
-@use 'mixins' as *;
+@use '../../../styles/abstracts' as *;
 
 .input-field-container {
   margin-bottom: 20px;

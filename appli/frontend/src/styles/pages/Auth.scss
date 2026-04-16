@@ -1,0 +1,196 @@
+@use '../../styles/abstracts' as *;
+.auth-page {
+  min-height: calc(100vh - 80px); 
+  background-color: $color-bg;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  justify-content: flex-start; 
+
+  padding-top: 15px; 
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 40px;
+
+  .auth-card {
+    @include card-style;
+    width: 100%;
+    max-width: 400px; // Largeur par défaut pour la connexion
+    padding: 20px 25px;
+    border-radius: 24px;
+    text-align: center;
+    transition: max-width 0.4s ease;
+
+    // Classe à ajouter sur la carte lors de l'inscription
+    &.register-card {
+      max-width: 550px; 
+    }
+
+    .brand {
+      @include flex-center;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 25px;
+
+      img { 
+        width: 10em;
+        height: auto; 
+      }
+      h1 { margin: 0; }
+    }
+
+    // Titre des étapes (ex: "Vos informations personnelles")
+    .step-title {
+      font-size: 1.1rem;
+      font-weight: $weight-semibold;
+      color: $color-primary;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    // Toggle principal (Connexion / Inscription)
+    .tabs {
+      display: flex;
+      background: #F1F1F1;
+      padding: 4px;
+      border-radius: $radius-md;
+      margin-bottom: 25px;
+      gap: 4px;
+
+      .tab {
+        flex: 1;
+        padding: 10px;
+        text-decoration: none;
+        color: $color-text-light;
+        font-weight: $weight-medium;
+        border-radius: $radius-sm;
+        transition: 0.3s;
+        font-size: 0.9rem;
+
+        &.active {
+          background: $color-white;
+          color: $color-text-main;
+          box-shadow: $shadow-soft;
+        }
+      }
+    }
+
+    // GRILLE POUR METTRE 2 CHAMPS CÔTE À CÔTE
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+
+      @media (max-width: $tablet) {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+    }
+
+    // SECOND TOGGLE (Étudiant / Entreprise)
+    .role-toggle-container {
+      display: flex;
+      background: #F1F1F1;
+      padding: 4px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+
+      .role-btn {
+        flex: 1;
+        border: none;
+        padding: 10px;
+        border-radius: 10px;
+        cursor: pointer;
+        background: transparent;
+        font-family: $font-secondary;
+        font-weight: $weight-semibold;
+        color: $color-text-light;
+        transition: 0.3s;
+
+        &.active {
+          background: $color-white;
+          color: $color-primary;
+          box-shadow: $shadow-soft;
+        }
+      }
+    }
+
+    // Séparateur discret pour les adresses
+    hr {
+      border: none;
+      border-top: 1px solid $color-border;
+      margin: 20px 0;
+    }
+
+    // Champs de sélection (Stage/Alternance)
+    .custom-select-group {
+      margin-bottom: 20px;
+      text-align: left;
+      
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: $weight-semibold;
+        font-size: 0.9rem;
+      }
+
+      select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid $color-border;
+        border-radius: $radius-md;
+        background: $color-white;
+        font-family: $font-secondary;
+        outline: none;
+        
+        &:focus { border-color: $color-primary; }
+      }
+    }
+
+    // Actions en bas de formulaire (Retour / Valider)
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 25px;
+
+      .btn-back {
+        background: none;
+        border: none;
+        color: $color-text-light;
+        text-decoration: underline;
+        cursor: pointer;
+        font-family: $font-secondary;
+      }
+
+      .btn { width: auto; min-width: 180px; }
+    }
+
+    .btn {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .forgot-password {
+      display: block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: $color-text-light;
+      font-size: 0.85rem;
+      transition: color 0.3s;
+
+      &:hover { color: $color-primary; }
+    }
+
+    // Animation pour le switch de rôle
+    .animate-fade {
+      animation: fadeIn 0.3s ease-in-out;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -1,5 +1,4 @@
-@use 'variables' as *;
-@use 'mixins' as *;
+@use '../../../styles/abstracts' as *;
 
 .navbar-header {
   position: sticky;

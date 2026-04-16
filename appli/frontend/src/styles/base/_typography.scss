@@ -1,5 +1,4 @@
-@use 'variables' as *;
-@use 'mixins' as *;
+@use '../abstracts' as *;
 
 body, p, li, a {
   font-family: $font-secondary;
