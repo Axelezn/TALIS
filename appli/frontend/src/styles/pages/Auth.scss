@@ -172,6 +172,26 @@
       margin-top: 10px;
     }
 
+    .auth-feedback {
+      margin: 0 0 14px;
+      padding: 10px 12px;
+      border-radius: $radius-sm;
+      font-size: 0.85rem;
+      text-align: left;
+
+      &--error {
+        color: #8b1e1e;
+        background: #ffe7e7;
+        border: 1px solid #f2b1b1;
+      }
+
+      &--success {
+        color: #196b35;
+        background: #e8f8ee;
+        border: 1px solid #b8e6c9;
+      }
+    }
+
     .forgot-password {
       display: block;
       margin-top: 20px;
