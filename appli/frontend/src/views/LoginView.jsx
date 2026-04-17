@@ -1,23 +1,51 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import InputField from '../components/common/InputField/InputField';
 import talisLogoFull from '../assets/talis_logo_full.png';
 import AuthToggle from '../components/auth/AuthToggle';
+import { loginUser } from '../services/authService';
 import '../styles/pages/Auth.scss';
 
 export default function LoginView() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [formData, setFormData] = useState({
-    email: 'test@test.com',
-    password: ''
+    role: 'etudiant',
+    email: '',
+    password: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  useEffect(() => {
+    if (location.state?.message) {
+      setSuccessMessage(location.state.message);
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.pathname, location.state, navigate]);
 
   const handleChange = (e) => {
+    setErrorMessage('');
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Connexion avec :", formData);
+
+    setIsSubmitting(true);
+    setErrorMessage('');
+
+    try {
+      const response = await loginUser(formData);
+      localStorage.setItem('talis_token', response.token);
+      localStorage.setItem('talis_user', JSON.stringify(response.user));
+      navigate('/dashboard');
+    } catch (error) {
+      setErrorMessage(error.message || 'La connexion a échoué.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -32,11 +60,22 @@ export default function LoginView() {
         </div>
 
         <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="custom-select-group">
+            <label className="text-bold">Profil</label>
+            <select name="role" className="custom-select" value={formData.role} onChange={handleChange}>
+              <option value="etudiant">Etudiant</option>
+              <option value="entreprise">Entreprise</option>
+            </select>
+          </div>
+
+          {successMessage ? <p className="auth-feedback auth-feedback--success">{successMessage}</p> : null}
+          {errorMessage ? <p className="auth-feedback auth-feedback--error">{errorMessage}</p> : null}
+
           <InputField 
             label="E-Mail"
             type="email"
             name="email"
-            placeholder="test@test.com"
+            placeholder="vous@talis.com"
             value={formData.email}
             onChange={handleChange}
             required
@@ -51,8 +90,8 @@ export default function LoginView() {
             onChange={handleChange}
             required
           />
-          <button type="submit" className="btn btn--primary">
-            Se connecter
+          <button type="submit" className="btn btn--primary" disabled={isSubmitting}>
+            {isSubmitting ? 'Connexion...' : 'Se connecter'}
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '12px' }}>
               <line x1="5" y1="12" x2="19" y2="12"></line>
               <polyline points="12 5 19 12 12 19"></polyline>

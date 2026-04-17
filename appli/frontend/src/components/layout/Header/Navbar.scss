@@ -27,6 +27,32 @@
     display: flex;
     align-items: center;
     gap: 1rem; }
+  .nav-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid $color-primary;
+    overflow: hidden;
+    @include flex-center;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 0;
+    background: #f6f8fb;
+    color: $color-primary;
+    font-family: $font-secondary;
+    font-weight: $weight-bold;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(1.04);
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
   &__links {
     display: flex;
     gap: 2.5rem;
@@ -62,7 +88,72 @@
     }
   }
   &__logo { @include flex-center; flex: 1; img { height: 3.8rem; } }
+  &__avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 2px solid $color-primary;
+    overflow: hidden;
+    @include flex-center;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 0;
+    color: $color-primary;
+    font-family: $font-secondary;
+    font-weight: $weight-bold;
+    background: #f6f8fb;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
   &__burger { background: none; border: none; @include flex-center; }
+}
+
+.account-menu {
+  position: relative;
+
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 190px;
+    background: $color-white;
+    border: 1px solid $color-border;
+    border-radius: 12px;
+    box-shadow: 0 14px 28px rgba(16, 23, 42, 0.12);
+    padding: 0.45rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    button {
+      width: 100%;
+      border: none;
+      background: transparent;
+      text-align: left;
+      padding: 0.7rem 0.75rem;
+      border-radius: 8px;
+      color: $color-text-main;
+      font-family: $font-secondary;
+      font-weight: $weight-medium;
+      cursor: pointer;
+
+      &:hover {
+        background: #f6f8fb;
+      }
+    }
+  }
+
+  &--mobile {
+    .account-menu__dropdown {
+      left: 0;
+      right: auto;
+      min-width: 170px;
+    }
+  }
 }
 
 .mobile-overlay {
