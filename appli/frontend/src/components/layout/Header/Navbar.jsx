@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Bell, Menu, X } from 'lucide-react';
 // Importation de Link pour la navigation interne sans rechargement
 import { Link } from 'react-router-dom'; 
-import logo from '../assets/talis_logo_full.png';
-import Button from './Button'; 
-import '../styles/Navbar.scss';
+import logo from '../../../assets/talis_logo_full.png';
+import Button from '../../common/Button/Button';
+import './Navbar.scss';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);

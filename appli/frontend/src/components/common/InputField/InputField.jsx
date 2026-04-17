@@ -1,6 +1,6 @@
 // src/components/common/InputField.jsx
 import { useState } from 'react';
-import '../styles/InputField.scss';
+import './InputField.scss';
 
 export default function InputField({ label, type, placeholder, value, onChange, name, required = false }) {
   const [showPassword, setShowPassword] = useState(false);

@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import InputField from '../components/InputField';
+import InputField from '../components/common/InputField/InputField';
 import talisLogoFull from '../assets/talis_logo_full.png';
-import '../styles/Auth.scss';
+import AuthToggle from '../components/auth/AuthToggle';
+import '../styles/pages/Auth.scss';
 
 export default function LoginView() {
   const [formData, setFormData] = useState({
@@ -27,8 +28,7 @@ export default function LoginView() {
         </div>
 
         <div className="tabs-container">
-          <Link to="/login" className="tab active">Se connecter</Link>
-          <Link to="/register" className="tab">S'inscrire</Link>
+            <AuthToggle />
         </div>
 
         <form className="auth-form" onSubmit={handleSubmit}>

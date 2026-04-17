@@ -1,9 +1,10 @@
 import { Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
+import Navbar from './components/layout/Header/Navbar';
 import LoginView from './views/LoginView';
 
 // Import des styles globaux
 import './styles/main.scss';
+import RegisterView from './views/RegisterView';
 
 // Composant pour le contenu de ta page d'accueil
 const Home = () => {
@@ -25,7 +26,7 @@ function App() {
         <Route path="/" element={<Home />} />
 
         <Route path="/login" element={<LoginView />} />
-
+        <Route path="/register" element={<RegisterView />} />
         <Route path="/offres" element={<main><h1>Liste des offres</h1></main>} />
 
         <Route path="/dashboard" element={<main><h1>Tableau de bord</h1></main>} />
