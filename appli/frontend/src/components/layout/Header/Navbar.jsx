@@ -13,6 +13,7 @@ const Navbar = () => {
   const hasNotifications = true; 
   const [currentUser, setCurrentUser] = useState(null);
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
+  const [accountMenuPathname, setAccountMenuPathname] = useState(location.pathname);
 
   useEffect(() => {
     const syncUserFromStorage = () => {
@@ -59,20 +60,25 @@ const Navbar = () => {
     };
   }, []);
 
-  useEffect(() => {
-    setIsAccountMenuOpen(false);
-  }, [location.pathname]);
-
   const isAuthenticated = Boolean(currentUser);
+  const isAccountMenuVisible = isAccountMenuOpen && accountMenuPathname === location.pathname;
   const avatarUrl = currentUser?.photo || currentUser?.avatar || null;
   const avatarFallback = currentUser?.prenom?.[0] || currentUser?.nom?.[0] || currentUser?.mail?.[0] || 'U';
 
   const openOrToggleAccountMenu = () => {
-    setIsAccountMenuOpen((previous) => !previous);
+    setIsAccountMenuOpen((previous) => {
+      if (previous && accountMenuPathname === location.pathname) {
+        return false;
+      }
+
+      setAccountMenuPathname(location.pathname);
+      return true;
+    });
   };
 
   const openAccountMenuWithRightClick = (event) => {
     event.preventDefault();
+    setAccountMenuPathname(location.pathname);
     setIsAccountMenuOpen(true);
   };
 
@@ -129,7 +135,7 @@ const Navbar = () => {
                   type="button"
                   className="nav-avatar"
                   aria-haspopup="menu"
-                  aria-expanded={isAccountMenuOpen}
+                  aria-expanded={isAccountMenuVisible}
                   aria-label="Ouvrir le menu utilisateur"
                   onClick={openOrToggleAccountMenu}
                   onContextMenu={openAccountMenuWithRightClick}
@@ -141,7 +147,7 @@ const Navbar = () => {
                   )}
                 </button>
 
-                {isAccountMenuOpen ? (
+                {isAccountMenuVisible ? (
                   <div className="account-menu__dropdown" role="menu" aria-label="Menu utilisateur">
                     <button type="button" role="menuitem" onClick={handleAccountManagement}>
                       Gérer mon compte
@@ -166,7 +172,7 @@ const Navbar = () => {
               type="button"
               className="nav-mobile__avatar"
               aria-haspopup="menu"
-              aria-expanded={isAccountMenuOpen}
+              aria-expanded={isAccountMenuVisible}
               aria-label="Ouvrir le menu utilisateur"
               onClick={openOrToggleAccountMenu}
               onContextMenu={openAccountMenuWithRightClick}
@@ -178,7 +184,7 @@ const Navbar = () => {
               )}
             </button>
 
-            {isAccountMenuOpen ? (
+            {isAccountMenuVisible ? (
               <div className="account-menu__dropdown" role="menu" aria-label="Menu utilisateur">
                 <button type="button" role="menuitem" onClick={handleAccountManagement}>
                   Gérer mon compte
