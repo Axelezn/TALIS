@@ -1,0 +1,20 @@
+info:
+  name: Delete entreprise
+  type: http
+  seq: 5
+
+http:
+  method: DELETE
+  url: "{{base_URL}}/api/entreprises/{{id_entreprise}}"
+  auth: inherit
+
+runtime:
+  variables:
+    - name: id_entreprise
+      value: "2"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

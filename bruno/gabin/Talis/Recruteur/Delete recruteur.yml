@@ -1,0 +1,20 @@
+info:
+  name: Delete recruteur
+  type: http
+  seq: 5
+
+http:
+  method: DELETE
+  url: "{{base_URL}}/api/recruteurs/{{id_recruteur}}"
+  auth: inherit
+
+runtime:
+  variables:
+    - name: id_recruteur
+      value: "2"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

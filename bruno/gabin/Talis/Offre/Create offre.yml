@@ -1,0 +1,26 @@
+info:
+  name: Create offre
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{base_URL}}/api/offres"
+  body:
+    type: json
+    data: |-
+      {
+        "type": "stage",
+        "titre": "Developpeur web junior",
+        "date_send": "2026-06-15",
+        "date_stop": "2026-07-15",
+        "remuneration": 800,
+        "description": "Participation au developpement frontend et backend."
+      } 
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

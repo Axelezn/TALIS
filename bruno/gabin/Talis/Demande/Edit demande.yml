@@ -1,0 +1,28 @@
+info:
+  name: Edit demande
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{base_URL}}/api/demandes/{{id_demande}}"
+  body:
+    type: json
+    data: |-
+      {
+      "id_user": 1,
+      "id_offre": 2,
+      "demande": "Mise a jour de la candidature."
+      }
+  auth: inherit
+
+runtime:
+  variables:
+    - name: id_demande
+      value: "1"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

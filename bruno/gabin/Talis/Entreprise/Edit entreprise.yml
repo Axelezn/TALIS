@@ -1,0 +1,31 @@
+info:
+  name: Edit entreprise
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{base_URL}}/api/entreprises/{{id_entreprise}}"
+  body:
+    type: json
+    data: |-
+      {
+        "nom": "TechNova France",
+        "adresse_complete": "14 rue de Paris, 75001 Paris",
+        "numero_rue": 14,
+        "code_postal": 75001,
+        "ville": "Paris",
+        "certif": 1
+      }
+  auth: inherit
+
+runtime:
+  variables:
+    - name: id_entreprise
+      value: "2"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
