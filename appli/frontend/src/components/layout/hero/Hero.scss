@@ -1,0 +1,426 @@
+@use '../../../styles/abstracts' as *;
+
+// --- HERO SCSS STYLE ---
+
+.hero-page-wrapper {
+  background-color: #F8F9FA;
+  font-family: $font-secondary;
+  width: 100%;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+// 1. MOBILE-FIRST NAVIGATION HEADER IN HERO
+.hero-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #F8F9FA;
+  height: 72px;
+  padding: 0 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+  .nav-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2D3436;
+    padding: 8px;
+    position: relative;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    svg {
+      width: 28px;
+      height: 28px;
+      stroke-width: 2.2;
+    }
+
+    &--bell {
+      .bell-dot {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        width: 10px;
+        height: 10px;
+        background-color: $color-primary; // Purple dot
+        border-radius: 50%;
+        border: 2px solid #F8F9FA;
+      }
+    }
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    img {
+      height: 44px;
+      width: auto;
+      object-fit: contain;
+    }
+  }
+
+  // Hidden on desktop by default
+  @media (min-width: $desktop) {
+    display: none; // Rely on global PC navbar
+  }
+}
+
+// 2. HERO CONTAINER LAYOUT
+.hero-section {
+  width: 100%;
+  background-color: #F8F9FA;
+
+  .hero-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    
+    @media (min-width: $desktop) {
+      flex-direction: row-reverse; // Puts image on left, text content on right in desktop!
+      min-height: 520px;
+      align-items: stretch;
+      background-color: $color-white;
+    }
+  }
+}
+
+// 3. HERO CONTENT BLOCK (TEXT, SEARCH, TAGS)
+.hero-content {
+  padding: 32px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background-color: #F8F9FA;
+
+  @media (min-width: $desktop) {
+    flex: 1 1 50%;
+    background-color: $color-white;
+    padding: 60px 60px 60px 140px; // Padding on left to offset slant overlay
+    align-items: flex-start;
+    text-align: left;
+    justify-content: center;
+    position: relative;
+    margin-left: -120px; // Pull content block over the left image block to enable chevron visual
+    z-index: 2;
+    clip-path: polygon(120px 0, 100% 0, 100% 100%, 120px 100%, 0 45%); // Chevron/Vertex pointing leftward!
+  }
+}
+
+// 4. TYPOGRAPHY IN HERO
+.hero-title {
+  font-family: $font-main;
+  font-weight: 700;
+  font-size: 21px;
+  line-height: 1.35;
+  color: #111111;
+  margin-bottom: 12px;
+
+  span, .hero-title-accent {
+    font-weight: 800;
+    font-size: 20px;
+    color: #111111;
+  }
+
+  @media (min-width: $desktop) {
+    font-size: 26px;
+    color: $color-primary; // Lavander color on desktop!
+    line-height: 1.25;
+
+    span, .hero-title-accent {
+      font-size: 26px;
+      color: $color-primary; // Matching lavander color
+    }
+  }
+}
+
+.hero-subtitle {
+  display: none; // Hidden on mobile according to mobile image
+
+  @media (min-width: $desktop) {
+    display: block;
+    font-size: 13px;
+    color: #A3A3C2; // Soft light violet-blue tone
+    font-weight: 500;
+    margin-bottom: 32px;
+    max-width: 500px;
+  }
+}
+
+// 5. SEARCH & WRAPPERS
+.hero-search-wrapper {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 12px;
+
+  @media (min-width: $desktop) {
+    width: 100%;
+    max-width: 520px;
+    align-items: flex-start;
+    gap: 20px;
+  }
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+
+  .search-input {
+    flex: 1;
+    background-color: $color-white;
+    border: none;
+    height: 56px;
+    border-radius: 16px;
+    padding: 0 24px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #2D3436;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    transition: all 0.25s ease;
+    outline: none;
+
+    &::placeholder {
+      color: #9E9E9E;
+    }
+
+    &:focus {
+      box-shadow: 0 6px 20px rgba(185, 170, 249, 0.25);
+      border: 1px solid rgba(185, 170, 249, 0.4);
+    }
+  }
+
+  .search-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: #000000;
+    border: none;
+    color: $color-white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+    &:hover {
+      background-color: #1A1A1A;
+      transform: scale(1.06);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    svg {
+      width: 22px;
+      height: 22px;
+      stroke: $color-white;
+      stroke-width: 2.5;
+    }
+  }
+}
+
+// 6. CATEGORIES / TAGS
+.hero-tags {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  width: 100%;
+  margin-top: 4px;
+
+  @media (min-width: $desktop) {
+    justify-content: flex-start;
+    margin-top: 0;
+  }
+}
+
+.tag-btn {
+  background-color: $color-white;
+  color: #111111;
+  font-family: $font-secondary;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 12px;
+  border: 1px solid #DFE6E9;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  white-space: nowrap;
+
+  @media (min-width: $desktop) {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+
+  &:hover {
+    background-color: #f7f6ff;
+    border-color: $color-primary;
+    color: darken($color-primary, 15%);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+// 7. HERO IMAGE BOX
+.hero-image-box {
+  width: 100%;
+  height: 240px;
+  overflow: hidden;
+
+  .hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (min-width: $desktop) {
+    flex: 1 1 50%;
+    height: auto;
+    min-height: 520px;
+    z-index: 1;
+    position: relative;
+    clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%); // Optional matching cutout to reinforce visual structure
+  }
+}
+
+// 8. COMMENT ÇA MARCHE SECTION (GRID & CARDS)
+.how-it-works {
+  padding: 40px 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: $color-white;
+
+  @media (min-width: $desktop) {
+    padding: 60px 40px;
+  }
+
+  .section-title {
+    font-family: $font-main;
+    font-weight: 700;
+    font-size: 20px;
+    color: #000000;
+    text-align: center;
+    margin-bottom: 24px;
+
+    @media (min-width: $desktop) {
+      font-size: 24px;
+      text-align: left;
+      margin-bottom: 36px;
+    }
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); // 2 columns on mobile by default to show first two card slots beautifully
+    gap: 16px;
+
+    @media (min-width: $tablet) {
+      grid-template-columns: repeat(3, 1fr); // 3 columns for tablet and above
+    }
+
+    @media (min-width: $desktop) {
+      gap: 24px;
+    }
+  }
+}
+
+.work-card {
+  background-color: #F8F9FA;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  border-radius: 20px;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 140px;
+  transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+
+  // Hidden last card on mobile mode (first image screens have 2 cards, desktop have 3)
+  &:last-child {
+    grid-column: span 2; // Span bottom row on mobile for symmetrical look
+    @media (min-width: $tablet) {
+      grid-column: span 1;
+    }
+  }
+
+  @media (min-width: $desktop) {
+    padding: 36px 24px;
+    min-height: 180px;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(185, 170, 249, 0.12);
+    border-color: rgba(185, 170, 249, 0.3);
+    background-color: $color-white;
+  }
+
+  .card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #B9AAF9; // soft theme violet
+    transition: transform 0.3s ease;
+
+    svg {
+      width: 48px;
+      height: 48px;
+      stroke-width: 1.21;
+    }
+
+    &--purple {
+      color: #A396EB;
+    }
+
+    &--purple-blue {
+      color: #B2A4FF;
+    }
+
+    &--blue {
+      color: #B9AAF9;
+    }
+  }
+
+  &:hover .card-icon {
+    transform: scale(1.1);
+  }
+
+  .card-label {
+    font-family: $font-secondary;
+    font-weight: 700;
+    font-size: 13px;
+    color: #111111;
+    margin-top: 14px;
+    line-height: 1.3;
+
+    @media (min-width: $desktop) {
+      font-size: 14px;
+      margin-top: 18px;
+    }
+  }
+}
