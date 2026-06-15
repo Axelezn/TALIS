@@ -1,0 +1,20 @@
+info:
+  name: Delete demande
+  type: http
+  seq: 5
+
+http:
+  method: DELETE
+  url: "{{base_URL}}/api/demandes/{{id_demande}}"
+  auth: inherit
+
+runtime:
+  variables:
+    - name: id_demande
+      value: "1"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

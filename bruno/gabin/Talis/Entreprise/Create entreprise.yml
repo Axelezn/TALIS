@@ -1,0 +1,26 @@
+info:
+  name: Create entreprise
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{base_URL}}/api/entreprises"
+  body:
+    type: json
+    data: |-
+      {
+        "nom": "TechNova2",
+        "adresse_complete": "12 rue de Paris, 75001 Paris",
+        "numero_rue": 12,
+        "code_postal": 75001,
+        "ville": "Paris",
+        "certif": 0
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

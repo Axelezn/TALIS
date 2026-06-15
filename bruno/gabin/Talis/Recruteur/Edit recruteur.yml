@@ -1,0 +1,34 @@
+info:
+  name: Edit recruteur
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{base_URL}}/api/recruteurs/{{id_recruteur}}"
+  body:
+    type: json
+    data: |-
+      {
+        "id_entreprise": 1,
+        "nom": "Martin",
+        "prenom": "Claire",
+        "ddn": "1990-04-20",
+        "mail": "claire.martin.updated@entreprise.com",
+        "tel": "0699887766",
+        "certif": 1,
+        "id_document": null,
+        "id_offre": null
+      }
+  auth: inherit
+
+runtime:
+  variables:
+    - name: id_recruteur
+      value: "1"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

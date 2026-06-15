@@ -1,0 +1,32 @@
+info:
+  name: Edit utilisateur
+  type: http
+  seq: 3
+
+http:
+  method: PUT
+  url: "{{base_URL}}/api/utilisateurs/{{id_utilisateur}}"
+  body:
+    type: json
+    data: |-
+      {
+      "nom": "Dupont",
+      "prenom": "Jeanne",
+      "ddn": "2000-05-14",
+      "mail": "jeanne.dupont@example.com",
+      "tel": "0699999999",
+      "certif": 1,
+      "id_document": null
+      }
+  auth: inherit
+
+runtime:
+  variables:
+    - name: id_utilisateur
+      value: "1"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

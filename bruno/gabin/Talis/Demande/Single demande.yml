@@ -1,0 +1,20 @@
+info:
+  name: Single demande
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{base_URL}}/api/demandes/{{id_demande}}"
+  auth: inherit
+
+runtime:
+  variables:
+    - name: id_demande
+      value: "1"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
