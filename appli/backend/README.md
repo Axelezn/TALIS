@@ -75,3 +75,27 @@ ___
 [ ] Chaque route est protégée par un bloc try/catch.
 
 [ ] Je renvoie les codes HTTP appropriés (201 pour création, 400/409 pour erreurs métier).
+
+
+# Guide d'installation (Backend)
+1. Installer les dépendances
+```
+npm install
+```
+2. Créer un fichier .env (à mettre dans le dossier src !!!pas à la racine du backend!!!)
+```
+JWT_SECRET=change-moi-par-une-cle-longue
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=talis
+DB_CONNECTION_LIMIT=10
+PORT=3000
+FRONTEND_ORIGIN=http://localhost:5173
+```
+3. Importer database.sql dans la base de données
+4. Lancer le Backend (dans le dossier src)
+```
+node app.js
+```
