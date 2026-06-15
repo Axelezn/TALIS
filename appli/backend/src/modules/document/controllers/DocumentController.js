@@ -44,7 +44,7 @@ export class DocumentController {
   async delete(req, res) {
     try {
       await this.documentService.delete(req.params.id);
-      res.status(204).send();
+      res.status(200).json({ message: 'Document supprime avec succes.' });
     } catch (error) {
       this.#handleError(error, res);
     }
