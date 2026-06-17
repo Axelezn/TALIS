@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
 import { createDbPool } from './config/db.js';
 import { setupUtilisateurModule } from './modules/utilisateur/index.js';
 import { setupDocumentModule } from './modules/document/index.js';
@@ -15,7 +16,8 @@ const port = Number(process.env.PORT || 3000);
 const db = createDbPool();
 const frontendOrigin = process.env.FRONTEND_ORIGIN || 'http://localhost:5173';
 
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 app.use(
 	cors({
 		origin: frontendOrigin,

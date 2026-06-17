@@ -16,6 +16,12 @@ export class RecruteurEntity {
   #certif;
   #idDocument;
   #idOffre;
+  #bio;
+  #companyName;
+  #sector;
+  #jobTitle;
+  #linkedin;
+  #idPhotoDocument;
 
   constructor(data = {}) {
     this.#idRecruteur = toOptionalPositiveInt(data.id_recruteur, 'id_recruteur');
@@ -28,6 +34,12 @@ export class RecruteurEntity {
     this.#certif = toOptionalTinyIntFlag(data.certif, 'certif');
     this.#idDocument = toOptionalPositiveInt(data.id_document, 'id_document');
     this.#idOffre = toOptionalPositiveInt(data.id_offre, 'id_offre');
+    this.#bio = toOptionalString(data.bio, 'bio', 65535);
+    this.#companyName = toOptionalString(data.company_name || data.companyName, 'company_name', 100);
+    this.#sector = toOptionalString(data.sector, 'sector', 100);
+    this.#jobTitle = toOptionalString(data.job_title || data.jobTitle, 'job_title', 100);
+    this.#linkedin = toOptionalString(data.linkedin, 'linkedin', 255);
+    this.#idPhotoDocument = toOptionalPositiveInt(data.id_photo_document || data.idPhotoDocument, 'id_photo_document');
   }
 
   toJSON() {
@@ -42,6 +54,14 @@ export class RecruteurEntity {
       certif: this.#certif,
       id_document: this.#idDocument,
       id_offre: this.#idOffre,
+      bio: this.#bio,
+      companyName: this.#companyName,
+      company_name: this.#companyName,
+      sector: this.#sector,
+      jobTitle: this.#jobTitle,
+      job_title: this.#jobTitle,
+      linkedin: this.#linkedin,
+      id_photo_document: this.#idPhotoDocument,
     };
   }
 }

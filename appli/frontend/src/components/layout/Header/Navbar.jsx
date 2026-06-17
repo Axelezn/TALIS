@@ -84,7 +84,7 @@ const Navbar = () => {
 
   const handleAccountManagement = () => {
     setIsAccountMenuOpen(false);
-    navigate('/dashboard');
+    navigate('/profil');
   };
 
   const handleLogout = () => {
@@ -114,7 +114,7 @@ const Navbar = () => {
           <ul className="nav-desktop__links">
             <li><Link to="/">Accueil</Link></li>
             <li><Link to="/offres">Offres</Link></li>
-            <li><Link to="/dashboard">Tableau de bord</Link></li>
+            <li><Link to="/profil">Mon Profil</Link></li>
           </ul>
 
           {/* 3. Bloc Droite : Actions avec redirection vers LoginView */}
@@ -228,7 +228,7 @@ const Navbar = () => {
           <ul className="mobile-overlay__links">
             <li><Link to="/" onClick={() => setIsOpen(false)}>Accueil</Link></li>
             <li><Link to="/offres" onClick={() => setIsOpen(false)}>Offres</Link></li>
-            <li><Link to="/dashboard" onClick={() => setIsOpen(false)}>Tableau de bord</Link></li>
+            <li><Link to="/profil" onClick={() => setIsOpen(false)}>Mon Profil</Link></li>
             
             {!isAuthenticated ? (
               <>
