@@ -7,6 +7,7 @@ import Hero from './components/layout/Hero/Hero';
 import './styles/main.scss';
 import RegisterView from './views/RegisterView';
 import ProfileView from './views/ProfileView';
+import OffresView from './views/OffresView';
 
 // Composant pour le contenu de ta page d'accueil
 const Home = () => {
@@ -27,7 +28,7 @@ function App() {
 
         <Route path="/login" element={<LoginView />} />
         <Route path="/register" element={<RegisterView />} />
-        <Route path="/offres" element={<main><h1>Liste des offres</h1></main>} />
+        <Route path="/offres" element={<OffresView />} />
 
         <Route path="/profil" element={<ProfileView />} />
         <Route path="/profile" element={<ProfileView />} />

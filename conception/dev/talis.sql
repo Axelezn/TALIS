@@ -1,75 +1,101 @@
--- Creation de la table document
-CREATE TABLE document (
-    id_document INT AUTO_INCREMENT,
-    nom VARCHAR(255),
-    path VARCHAR(255),
+CREATE DATABASE IF NOT EXISTS talis;
+USE talis;
+
+CREATE TABLE IF NOT EXISTS document (
+    id_document INT(11) NOT NULL AUTO_INCREMENT,
+    nom VARCHAR(255) NULL,
+    path VARCHAR(255) NULL,
     PRIMARY KEY (id_document)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Creation de la table entreprise
-CREATE TABLE entreprise (
-    id_entreprise INT AUTO_INCREMENT,
-    nom VARCHAR(50),
-    adresse_complete VARCHAR(255),
-    numero_rue INT,
-    code_postal INT,
-    ville VARCHAR(255),
-    certif BOOLEAN,
+CREATE TABLE IF NOT EXISTS entreprise (
+    id_entreprise INT(11) NOT NULL AUTO_INCREMENT,
+    nom VARCHAR(50) NULL,
+    adresse_complete VARCHAR(255) NULL,
+    numero_rue INT(11) NULL,
+    code_postal INT(11) NULL,
+    ville VARCHAR(255) NULL,
+    certif TINYINT(1) NULL,
     PRIMARY KEY (id_entreprise)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Creation de la table user (Utilisateur)
-CREATE TABLE `user` (
-    id_user INT AUTO_INCREMENT,
-    nom VARCHAR(50),
-    prenom VARCHAR(50),
-    ddn DATE,
-    mail VARCHAR(100),
-    tel VARCHAR(60),
-    certif BOOLEAN,
-    id_document INT NULL,
-    PRIMARY KEY (id_user),
-    CONSTRAINT fk_user_document FOREIGN KEY (id_document) REFERENCES document (id_document)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- Creation de la table offre
-CREATE TABLE offre (
-    id_offre INT AUTO_INCREMENT,
-    type VARCHAR(50),
-    titre VARCHAR(200),
-    date_send DATE,
-    date_stop DATE,
-    remuneration DOUBLE,
-    description TEXT,
+CREATE TABLE IF NOT EXISTS offre (
+    id_offre INT(11) NOT NULL AUTO_INCREMENT,
+    type VARCHAR(50) NULL,
+    titre VARCHAR(200) NULL,
+    date_send DATE NULL,
+    date_stop DATE NULL,
+    remuneration DOUBLE NULL,
+    description TEXT NULL,
+    entreprise VARCHAR(255) NULL,
     PRIMARY KEY (id_offre)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Creation de la table recruteur
-CREATE TABLE recruteur (
-    id_recruteur INT AUTO_INCREMENT,
-    id_entreprise INT NOT NULL,
-    nom VARCHAR(50),
-    prenom VARCHAR(50),
-    ddn DATE,
-    mail VARCHAR(100),
-    tel VARCHAR(60),
-    certif BOOLEAN,
-    id_document INT NULL,
-    id_offre INT NULL,
+CREATE TABLE IF NOT EXISTS `user` (
+    id_user INT(11) NOT NULL AUTO_INCREMENT,
+    nom VARCHAR(50) NULL,
+    prenom VARCHAR(50) NULL,
+    ddn DATE NULL,
+    mail VARCHAR(100) NULL,
+    password_hash VARCHAR(255) NULL,
+    tel VARCHAR(60) NULL,
+    certif TINYINT(1) NULL,
+    id_document INT(11) NULL,
+    address VARCHAR(255) NULL,
+    city VARCHAR(100) NULL,
+    zip_code VARCHAR(20) NULL,
+    study_level VARCHAR(100) NULL,
+    study_place VARCHAR(100) NULL,
+    formation VARCHAR(100) NULL,
+    contract_type VARCHAR(50) NULL,
+    bio TEXT NULL,
+    id_photo_document INT(11) NULL,
+    PRIMARY KEY (id_user),
+    UNIQUE KEY uq_user_mail (mail),
+    KEY fk_user_document (id_document),
+    KEY fk_user_photo_document (id_photo_document),
+    CONSTRAINT fk_user_document FOREIGN KEY (id_document) REFERENCES document(id_document),
+    CONSTRAINT fk_user_photo_document FOREIGN KEY (id_photo_document) REFERENCES document(id_document)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS recruteur (
+    id_recruteur INT(11) NOT NULL AUTO_INCREMENT,
+    id_entreprise INT(11) NOT NULL,
+    nom VARCHAR(50) NULL,
+    prenom VARCHAR(50) NULL,
+    ddn DATE NULL,
+    mail VARCHAR(100) NULL,
+    password_hash VARCHAR(255) NULL,
+    tel VARCHAR(60) NULL,
+    certif TINYINT(1) NULL,
+    id_document INT(11) NULL,
+    id_offre INT(11) NULL,
+    bio TEXT NULL,
+    company_name VARCHAR(100) NULL,
+    sector VARCHAR(100) NULL,
+    job_title VARCHAR(100) NULL,
+    linkedin VARCHAR(255) NULL,
+    id_photo_document INT(11) NULL,
     PRIMARY KEY (id_recruteur),
-    CONSTRAINT fk_recruteur_entreprise FOREIGN KEY (id_entreprise) REFERENCES entreprise (id_entreprise),
-    CONSTRAINT fk_recruteur_document FOREIGN KEY (id_document) REFERENCES document (id_document),
-    CONSTRAINT fk_recruteur_offre FOREIGN KEY (id_offre) REFERENCES offre (id_offre)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    UNIQUE KEY uq_recruteur_mail (mail),
+    KEY fk_recruteur_entreprise (id_entreprise),
+    KEY fk_recruteur_document (id_document),
+    KEY fk_recruteur_photo_document (id_photo_document),
+    KEY fk_recruteur_offre (id_offre),
+    CONSTRAINT fk_recruteur_entreprise FOREIGN KEY (id_entreprise) REFERENCES entreprise(id_entreprise),
+    CONSTRAINT fk_recruteur_document FOREIGN KEY (id_document) REFERENCES document(id_document),
+    CONSTRAINT fk_recruteur_photo_document FOREIGN KEY (id_photo_document) REFERENCES document(id_document),
+    CONSTRAINT fk_recruteur_offre FOREIGN KEY (id_offre) REFERENCES offre(id_offre)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Creation de la table demande
-CREATE TABLE demande (
-    id_demande INT AUTO_INCREMENT,
-    id_user INT NOT NULL,
-    id_offre INT NOT NULL,
-    demande VARCHAR(100),
+CREATE TABLE IF NOT EXISTS demande (
+    id_demande INT(11) NOT NULL AUTO_INCREMENT,
+    id_user INT(11) NOT NULL,
+    id_offre INT(11) NOT NULL,
+    demande VARCHAR(100) NULL,
     PRIMARY KEY (id_demande),
     UNIQUE KEY uq_demande_user_offre (id_user, id_offre),
-    CONSTRAINT fk_demande_user FOREIGN KEY (id_user) REFERENCES `user` (id_user),
-    CONSTRAINT fk_demande_offre FOREIGN KEY (id_offre) REFERENCES offre (id_offre)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    KEY fk_demande_offre (id_offre),
+    CONSTRAINT fk_demande_offre FOREIGN KEY (id_offre) REFERENCES offre(id_offre),
+    CONSTRAINT fk_demande_user FOREIGN KEY (id_user) REFERENCES `user`(id_user)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

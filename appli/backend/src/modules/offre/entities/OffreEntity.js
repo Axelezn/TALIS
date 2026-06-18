@@ -8,6 +8,7 @@ export class OffreEntity {
   #dateStop;
   #remuneration;
   #description;
+  #entreprise;
 
   constructor(data = {}) {
     this.#idOffre = toOptionalPositiveInt(data.id_offre, 'id_offre');
@@ -17,6 +18,7 @@ export class OffreEntity {
     this.#dateStop = toOptionalDate(data.date_stop, 'date_stop');
     this.#remuneration = toOptionalNumber(data.remuneration, 'remuneration');
     this.#description = toOptionalString(data.description, 'description', 10000);
+    this.#entreprise = toOptionalString(data.entreprise, 'entreprise', 255);
 
     if (this.#dateSend && this.#dateStop && this.#dateStop < this.#dateSend) {
       throw new Error('date_stop doit être supérieure ou égale à date_send.');
@@ -32,6 +34,7 @@ export class OffreEntity {
       date_stop: this.#dateStop,
       remuneration: this.#remuneration,
       description: this.#description,
+      entreprise: this.#entreprise,
     };
   }
 }
