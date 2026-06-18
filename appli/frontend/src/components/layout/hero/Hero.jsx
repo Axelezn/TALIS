@@ -1,10 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import talisLogoFull from "../../../assets/talis_logo_full.png";
 import heroGroupImage from "../../../assets/hero_img.png";
 import "./Hero.scss";
 
 export default function Hero() {
   const categories = ["Marketing", "Informatique", "Commerce"];
+  const location = useLocation();
+  const [isAuthenticated, setIsAuthenticated] = useState(Boolean(localStorage.getItem("talis_token")));
+
+  useEffect(() => {
+    const checkAuth = () => {
+      setIsAuthenticated(Boolean(localStorage.getItem("talis_token")));
+    };
+    checkAuth();
+    window.addEventListener("storage", checkAuth);
+    return () => window.removeEventListener("storage", checkAuth);
+  }, [location.pathname]);
 
   return (
     <div className="hero-page-wrapper">
@@ -70,19 +82,21 @@ export default function Hero() {
       {/* "Comment ça marche ?" Section - from your screenshots */}
       <section className="how-it-works">
         <h2 className="section-title">Comment ça marche ?</h2>
-        <div className="cards-grid">
+        <div className={`cards-grid ${isAuthenticated ? 'cards-grid--authenticated' : ''}`}>
           
-          <div className="work-card">
-            <div className="card-icon card-icon--purple">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <line x1="19" y1="8" x2="19" y2="14" />
-                <line x1="16" y1="11" x2="22" y2="11" />
-              </svg>
+          {!isAuthenticated && (
+            <div className="work-card">
+              <div className="card-icon card-icon--purple">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <line x1="19" y1="8" x2="19" y2="14" />
+                  <line x1="16" y1="11" x2="22" y2="11" />
+                </svg>
+              </div>
+              <h3 className="card-label">Créer votre profil</h3>
             </div>
-            <h3 className="card-label">Créer votre profil</h3>
-          </div>
+          )}
 
           <div className="work-card">
             <div className="card-icon card-icon--purple-blue">

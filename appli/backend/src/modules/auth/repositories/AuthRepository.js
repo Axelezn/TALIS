@@ -3,7 +3,7 @@ import { BaseRepository } from '../../../core/BaseRepository.js';
 export class AuthRepository extends BaseRepository {
   async findUserByEmail(mail) {
     const [rows] = await this.db.execute(
-      `SELECT id_user AS id, nom, prenom, mail, password_hash
+      `SELECT id_user AS id, nom, prenom, mail, password_hash, id_photo_document
        FROM \`user\`
        WHERE mail = ?
        LIMIT 1`,
@@ -21,12 +21,13 @@ export class AuthRepository extends BaseRepository {
       prenom: rows[0].prenom,
       mail: rows[0].mail,
       password_hash: rows[0].password_hash,
+      id_photo_document: rows[0].id_photo_document,
     };
   }
 
   async findRecruteurByEmail(mail) {
     const [rows] = await this.db.execute(
-      `SELECT id_recruteur AS id, id_entreprise, nom, prenom, mail, password_hash
+      `SELECT id_recruteur AS id, id_entreprise, nom, prenom, mail, password_hash, id_photo_document
        FROM recruteur
        WHERE mail = ?
        LIMIT 1`,
@@ -45,6 +46,22 @@ export class AuthRepository extends BaseRepository {
       prenom: rows[0].prenom,
       mail: rows[0].mail,
       password_hash: rows[0].password_hash,
+      id_photo_document: rows[0].id_photo_document,
+    };
+  }
+
+  async findDocumentById(idDocument) {
+    const [rows] = await this.db.execute(
+      'SELECT id_document, nom, path FROM document WHERE id_document = ?',
+      [idDocument]
+    );
+    if (rows.length === 0) {
+      return null;
+    }
+    return {
+      id_document: rows[0].id_document,
+      nom: rows[0].nom,
+      path: rows[0].path,
     };
   }
 

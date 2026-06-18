@@ -40,7 +40,7 @@ export default function LoginView() {
       const response = await loginUser(formData);
       localStorage.setItem('talis_token', response.token);
       localStorage.setItem('talis_user', JSON.stringify(response.user));
-      navigate('/dashboard');
+      navigate('/');
     } catch (error) {
       setErrorMessage(error.message || 'La connexion a échoué.');
     } finally {

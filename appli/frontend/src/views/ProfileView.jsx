@@ -95,6 +95,11 @@ export default function ProfileView() {
                 console.warn('Could not fetch linked photo document info', photoErr);
               }
             }
+
+            // Sync fresh profile back to local storage and state for seamless navbar display
+            localStorage.setItem('talis_user', JSON.stringify(dbUser));
+            setCurrentUser(dbUser);
+            window.dispatchEvent(new Event('storage'));
           } catch (apiErr) {
             console.warn('Real-time backend load failed, using stored copy', apiErr);
           }

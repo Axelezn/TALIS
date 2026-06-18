@@ -146,6 +146,18 @@ export class AuthService {
       { expiresIn: '7d' }
     );
 
+    let photo = null;
+    if (account.id_photo_document) {
+      try {
+        const doc = await this.authRepository.findDocumentById(account.id_photo_document);
+        if (doc && doc.path) {
+          photo = `http://localhost:3000/${doc.path}`;
+        }
+      } catch (err) {
+        console.warn('Could not resolve photo path on login:', err);
+      }
+    }
+
     return {
       token,
       user: {
@@ -155,6 +167,8 @@ export class AuthService {
         prenom: account.prenom,
         mail: account.mail,
         id_entreprise: account.id_entreprise || null,
+        id_photo_document: account.id_photo_document || null,
+        photo,
       },
     };
   }
