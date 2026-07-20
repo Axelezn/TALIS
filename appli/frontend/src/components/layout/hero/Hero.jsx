@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import talisLogoFull from "../../../assets/talis_logo_full.png";
 import heroGroupImage from "../../../assets/hero_img.png";
 import "./Hero.scss";
@@ -7,6 +7,7 @@ import "./Hero.scss";
 export default function Hero() {
   const categories = ["Marketing", "Informatique", "Commerce"];
   const location = useLocation();
+  const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(Boolean(localStorage.getItem("talis_token")));
 
   useEffect(() => {
@@ -90,7 +91,7 @@ export default function Hero() {
         <div className={`cards-grid ${isAuthenticated ? 'cards-grid--authenticated' : ''}`}>
           
           {!isAuthenticated && (
-            <div className="work-card">
+            <div className="work-card" onClick={() => navigate("/register")}>
               <div className="card-icon card-icon--purple">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
@@ -103,7 +104,7 @@ export default function Hero() {
             </div>
           )}
 
-          <div className="work-card">
+          <div className="work-card" onClick={() => navigate("/offres")}>
             <div className="card-icon card-icon--purple-blue">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -115,7 +116,11 @@ export default function Hero() {
             <h3 className="card-label">Explorer les offres</h3>
           </div>
 
-          <div className="work-card">
+          <div 
+            className="work-card" 
+            onClick={!isAuthenticated ? () => navigate("/login") : undefined}
+            style={isAuthenticated ? { cursor: "default" } : undefined}
+          >
             <div className="card-icon card-icon--blue">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
