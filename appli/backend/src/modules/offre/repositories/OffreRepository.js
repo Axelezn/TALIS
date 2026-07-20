@@ -4,7 +4,7 @@ import { OffreEntity } from '../entities/OffreEntity.js';
 export class OffreRepository extends BaseRepository {
   async getAll() {
     const [rows] = await this.db.execute(
-      `SELECT id_offre, type, titre, date_send, date_stop, remuneration, description
+      `SELECT id_offre, type, titre, date_send, date_stop, remuneration, description, entreprise
        FROM offre
        ORDER BY id_offre DESC`
     );
@@ -14,7 +14,7 @@ export class OffreRepository extends BaseRepository {
 
   async getById(idOffre) {
     const [rows] = await this.db.execute(
-      `SELECT id_offre, type, titre, date_send, date_stop, remuneration, description
+      `SELECT id_offre, type, titre, date_send, date_stop, remuneration, description, entreprise
        FROM offre
        WHERE id_offre = ?`,
       [idOffre]
@@ -30,8 +30,8 @@ export class OffreRepository extends BaseRepository {
   async create(entity) {
     const payload = entity.toJSON();
     const [result] = await this.db.execute(
-      `INSERT INTO offre (type, titre, date_send, date_stop, remuneration, description)
-       VALUES (?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO offre (type, titre, date_send, date_stop, remuneration, description, entreprise)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [
         payload.type,
         payload.titre,
@@ -39,6 +39,7 @@ export class OffreRepository extends BaseRepository {
         payload.date_stop,
         payload.remuneration,
         payload.description,
+        payload.entreprise,
       ]
     );
 
@@ -49,7 +50,7 @@ export class OffreRepository extends BaseRepository {
     const payload = entity.toJSON();
     await this.db.execute(
       `UPDATE offre
-       SET type = ?, titre = ?, date_send = ?, date_stop = ?, remuneration = ?, description = ?
+       SET type = ?, titre = ?, date_send = ?, date_stop = ?, remuneration = ?, description = ?, entreprise = ?
        WHERE id_offre = ?`,
       [
         payload.type,
@@ -58,6 +59,7 @@ export class OffreRepository extends BaseRepository {
         payload.date_stop,
         payload.remuneration,
         payload.description,
+        payload.entreprise,
         idOffre,
       ]
     );

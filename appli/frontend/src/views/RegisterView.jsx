@@ -15,7 +15,7 @@ export default function RegisterView() {
 
   const [formData, setFormData] = useState({
     // Étape 1
-    email: '', lastName: '', firstName: '', address: '', city: '', zipCode: '', phone: '', password: '', confirmPassword: '',
+    email: '', lastName: '', firstName: '', address: '', city: '', zipCode: '', phone: '', password: '', confirmPassword: '', ddn: '',
     // Étape 2 - Entreprise
     companyName: '', siret: '', companySize: '', sector: '', jobTitle: '', linkedin: '', hqAddress: '', hqCity: '', hqZipCode: '',
     // Étape 2 - Étudiant
@@ -24,15 +24,69 @@ export default function RegisterView() {
 
   const handleChange = (e) => {
     setErrorMessage('');
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    let { name, value } = e.target;
+
+    // Limite le code postal à 5 caractères max
+    if ((name === 'zipCode' || name === 'hqZipCode') && value.length > 5) {
+      value = value.slice(0, 5);
+    }
+
+    // Limite le téléphone à 10 chiffres max (sans compter les espaces/caractères spéciaux)
+    if (name === 'phone') {
+      const cleanPhone = value.replace(/[\s.-]/g, '');
+      if (cleanPhone.length > 10) {
+        return; // Empêche l'ajout du caractère si on dépasse 10 chiffres
+      }
+    }
+
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleNextStep = () => {
-    if (!formData.lastName || !formData.firstName || !formData.email || !formData.password) {
-      setErrorMessage('Veuillez renseigner les champs obligatoires de l\'étape 1.');
+    // 1. Check if any fields in Step 1 are empty
+    if (!formData.lastName.trim() || !formData.firstName.trim() || !formData.email.trim() || 
+        !formData.address.trim() || !formData.zipCode.trim() || !formData.city.trim() || 
+        !formData.phone.trim() || !formData.ddn.trim() || !formData.password.trim() || !formData.confirmPassword.trim()) {
+      setErrorMessage('Veuillez remplir tous les champs (aucun champ ne doit être laissé vide).');
       return;
     }
 
+    // 2. Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email.trim())) {
+      setErrorMessage('L\'adresse e-mail n\'est pas valide.');
+      return;
+    }
+
+    // 3. Validate zipCode (up to 5 digits)
+    const zipRegex = /^\d{1,5}$/;
+    if (!zipRegex.test(formData.zipCode.trim())) {
+      setErrorMessage('Le code postal doit être composé uniquement de chiffres (maximum 5 caractères).');
+      return;
+    }
+
+    // 4. Validate phone number format
+    const cleanPhone = formData.phone.replace(/[\s.-]/g, '');
+    const phoneRegex = /^(?:(?:\+|00)\d{1,4}|0)[1-9]\d{8,14}$/;
+    if (!phoneRegex.test(cleanPhone)) {
+      setErrorMessage('Le numéro de téléphone n\'est pas valide (ex: 0612345678).');
+      return;
+    }
+
+    // 5. Validate age (at least 15 years old)
+    const birthDate = new Date(formData.ddn);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    if (age < 15) {
+      setErrorMessage('Vous devez avoir au moins 15 ans pour accéder au site.');
+      return;
+    }
+
+    // 6. Validate password match and length
     if (formData.password !== formData.confirmPassword) {
       setErrorMessage('Les mots de passe ne correspondent pas.');
       return;
@@ -51,6 +105,29 @@ export default function RegisterView() {
     e.preventDefault();
     setIsSubmitting(true);
     setErrorMessage('');
+
+    // Check Step 2 empty fields
+    if (role === 'etudiant') {
+      if (!formData.studyLevel.trim() || !formData.studyPlace.trim() || !formData.major.trim()) {
+        setErrorMessage('Veuillez remplir tous les champs de votre profil étudiant (aucun champ ne doit être laissé vide).');
+        setIsSubmitting(false);
+        return;
+      }
+    } else if (role === 'entreprise') {
+      if (!formData.companyName.trim() || !formData.siret.trim() || !formData.companySize.trim() || 
+          !formData.sector.trim() || !formData.jobTitle.trim() || !formData.linkedin.trim() || 
+          !formData.hqAddress.trim() || !formData.hqZipCode.trim() || !formData.hqCity.trim()) {
+        setErrorMessage('Veuillez remplir tous les champs de votre profil entreprise (aucun champ ne doit être laissé vide).');
+        setIsSubmitting(false);
+        return;
+      }
+      const hqZipRegex = /^\d{1,5}$/;
+      if (!hqZipRegex.test(formData.hqZipCode.trim())) {
+        setErrorMessage('Le code postal du siège social doit être composé uniquement de chiffres (maximum 5 caractères).');
+        setIsSubmitting(false);
+        return;
+      }
+    }
 
     try {
       await registerUser({
@@ -89,10 +166,13 @@ export default function RegisterView() {
               <InputField label="E-Mail" type="email" name="email" placeholder="jean@talis.com" value={formData.email} onChange={handleChange} required />
               <InputField label="Adresse" name="address" placeholder="12 rue des Lilas" value={formData.address} onChange={handleChange} />
               <div className="form-grid">
-                <InputField label="Code Postal" name="zipCode" placeholder="75000" value={formData.zipCode} onChange={handleChange} />
+                <InputField label="Code Postal" name="zipCode" placeholder="75000" value={formData.zipCode} onChange={handleChange} maxLength={5} />
                 <InputField label="Ville" name="city" placeholder="Paris" value={formData.city} onChange={handleChange} />
               </div>
-              <InputField label="Téléphone" type="tel" name="phone" placeholder="06 12 34 56 78" value={formData.phone} onChange={handleChange} />
+              <div className="form-grid">
+                <InputField label="Téléphone" type="tel" name="phone" placeholder="06 12 34 56 78" value={formData.phone} onChange={handleChange} />
+                <InputField label="Date de naissance" type="date" name="ddn" value={formData.ddn} onChange={handleChange} />
+              </div>
               <div className="form-grid">
                 <InputField label="Mot de passe" type="password" name="password" value={formData.password} onChange={handleChange} required />
                 <InputField label="Confirmation" type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required />
@@ -109,7 +189,6 @@ export default function RegisterView() {
             <div className="step-content">
               <h2 className="h2-style text-small-title">Quel est votre profil ?</h2>
               
-              {/* Le second AuthToggle pour le rôle */}
               <div className="role-toggle-container">
                 <button 
                   type="button" 
@@ -155,7 +234,7 @@ export default function RegisterView() {
                   <hr />
                   <InputField label="Siège social" name="hqAddress" value={formData.hqAddress} onChange={handleChange} required />
                   <div className="form-grid">
-                    <InputField label="Code Postal" name="hqZipCode" value={formData.hqZipCode} onChange={handleChange} />
+                    <InputField label="Code Postal" name="hqZipCode" value={formData.hqZipCode} onChange={handleChange} maxLength={5} />
                     <InputField label="Ville" name="hqCity" value={formData.hqCity} onChange={handleChange} required />
                   </div>
                 </div>

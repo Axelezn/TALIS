@@ -3,7 +3,7 @@ import { BaseRepository } from '../../../core/BaseRepository.js';
 export class AuthRepository extends BaseRepository {
   async findUserByEmail(mail) {
     const [rows] = await this.db.execute(
-      `SELECT id_user AS id, nom, prenom, mail, password_hash
+      `SELECT id_user AS id, nom, prenom, mail, password_hash, id_photo_document
        FROM \`user\`
        WHERE mail = ?
        LIMIT 1`,
@@ -21,12 +21,13 @@ export class AuthRepository extends BaseRepository {
       prenom: rows[0].prenom,
       mail: rows[0].mail,
       password_hash: rows[0].password_hash,
+      id_photo_document: rows[0].id_photo_document,
     };
   }
 
   async findRecruteurByEmail(mail) {
     const [rows] = await this.db.execute(
-      `SELECT id_recruteur AS id, id_entreprise, nom, prenom, mail, password_hash
+      `SELECT id_recruteur AS id, id_entreprise, nom, prenom, mail, password_hash, id_photo_document
        FROM recruteur
        WHERE mail = ?
        LIMIT 1`,
@@ -45,13 +46,29 @@ export class AuthRepository extends BaseRepository {
       prenom: rows[0].prenom,
       mail: rows[0].mail,
       password_hash: rows[0].password_hash,
+      id_photo_document: rows[0].id_photo_document,
+    };
+  }
+
+  async findDocumentById(idDocument) {
+    const [rows] = await this.db.execute(
+      'SELECT id_document, nom, path FROM document WHERE id_document = ?',
+      [idDocument]
+    );
+    if (rows.length === 0) {
+      return null;
+    }
+    return {
+      id_document: rows[0].id_document,
+      nom: rows[0].nom,
+      path: rows[0].path,
     };
   }
 
   async createUserAccount(payload) {
     const [result] = await this.db.execute(
-      `INSERT INTO \`user\` (nom, prenom, ddn, mail, password_hash, tel, certif, id_document)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO \`user\` (nom, prenom, ddn, mail, password_hash, tel, certif, id_document, address, city, zip_code, study_level, study_place, formation, contract_type, bio, id_photo_document)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         payload.nom,
         payload.prenom,
@@ -61,6 +78,15 @@ export class AuthRepository extends BaseRepository {
         payload.tel,
         payload.certif,
         payload.id_document,
+        payload.address,
+        payload.city,
+        payload.zip_code,
+        payload.study_level,
+        payload.study_place,
+        payload.formation,
+        payload.contract_type,
+        payload.bio,
+        payload.id_photo_document,
       ]
     );
 
@@ -91,8 +117,8 @@ export class AuthRepository extends BaseRepository {
 
   async createRecruteurAccount(payload) {
     const [result] = await this.db.execute(
-      `INSERT INTO recruteur (id_entreprise, nom, prenom, ddn, mail, password_hash, tel, certif, id_document, id_offre)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO recruteur (id_entreprise, nom, prenom, ddn, mail, password_hash, tel, certif, id_document, id_offre, bio, company_name, sector, job_title, linkedin, id_photo_document)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         payload.id_entreprise,
         payload.nom,
@@ -104,6 +130,12 @@ export class AuthRepository extends BaseRepository {
         payload.certif,
         payload.id_document,
         payload.id_offre,
+        payload.bio,
+        payload.company_name,
+        payload.sector,
+        payload.job_title,
+        payload.linkedin,
+        payload.id_photo_document,
       ]
     );
 

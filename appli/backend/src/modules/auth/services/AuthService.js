@@ -48,6 +48,15 @@ export class AuthService {
         tel: data.tel || null,
         certif: 0,
         id_document: null,
+        address: data.address || null,
+        city: data.city || null,
+        zip_code: data.zip_code || null,
+        study_level: data.study_level || null,
+        study_place: data.study_place || null,
+        formation: data.formation || null,
+        contract_type: data.contract_type || null,
+        bio: data.bio || null,
+        id_photo_document: null,
       });
 
       return {
@@ -76,6 +85,12 @@ export class AuthService {
       certif: 0,
       id_document: null,
       id_offre: null,
+      bio: data.bio || null,
+      company_name: data.company_name || null,
+      sector: data.sector || null,
+      job_title: data.job_title || null,
+      linkedin: data.linkedin || null,
+      id_photo_document: null,
     });
 
     return {
@@ -131,6 +146,18 @@ export class AuthService {
       { expiresIn: '7d' }
     );
 
+    let photo = null;
+    if (account.id_photo_document) {
+      try {
+        const doc = await this.authRepository.findDocumentById(account.id_photo_document);
+        if (doc && doc.path) {
+          photo = `http://localhost:3000/${doc.path}`;
+        }
+      } catch (err) {
+        console.warn('Could not resolve photo path on login:', err);
+      }
+    }
+
     return {
       token,
       user: {
@@ -140,6 +167,8 @@ export class AuthService {
         prenom: account.prenom,
         mail: account.mail,
         id_entreprise: account.id_entreprise || null,
+        id_photo_document: account.id_photo_document || null,
+        photo,
       },
     };
   }

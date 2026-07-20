@@ -12,6 +12,34 @@
   align-items: center;
 }
 
+@mixin form-input-base {
+  height: 40px;
+  padding: 0 12px;
+  border-radius: $radius-md;
+  background-color: #fafafb;
+  border: 1px solid rgba($color-text-main, 0.1);
+  font-size: 13.5px;
+  font-family: $font-main;
+  color: $color-text-main;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+
+  &:focus {
+    background-color: $color-white;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.12);
+    outline: none;
+  }
+}
+
+@mixin animate-fade {
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@mixin animate-slide {
+  animation: slideLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 @mixin card-style {
   background: $color-white;
   border-radius: $radius-md;

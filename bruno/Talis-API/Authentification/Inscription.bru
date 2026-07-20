@@ -1,0 +1,30 @@
+meta {
+  name: Inscription
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseurl}}/api/auth/register
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "nom": "Eouzan",
+    "prenom": "Axel",
+    "ddn": "2006-04-15",
+    "mail": "nouvel.etudiant@gmail.com",
+    "password": "MonSuperPassword123!",
+    "tel": "0622860199",
+    "certif": 0,
+    "role": "etudiant",
+    "id_document": null
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

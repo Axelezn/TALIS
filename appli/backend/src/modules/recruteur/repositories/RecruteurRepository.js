@@ -4,7 +4,7 @@ import { RecruteurEntity } from '../entities/RecruteurEntity.js';
 export class RecruteurRepository extends BaseRepository {
   async getAll() {
     const [rows] = await this.db.execute(
-      `SELECT id_recruteur, id_entreprise, nom, prenom, ddn, mail, tel, certif, id_document, id_offre
+      `SELECT id_recruteur, id_entreprise, nom, prenom, ddn, mail, tel, certif, id_document, id_offre, bio, company_name, sector, job_title, linkedin, id_photo_document
        FROM recruteur
        ORDER BY id_recruteur DESC`
     );
@@ -14,7 +14,7 @@ export class RecruteurRepository extends BaseRepository {
 
   async getById(idRecruteur) {
     const [rows] = await this.db.execute(
-      `SELECT id_recruteur, id_entreprise, nom, prenom, ddn, mail, tel, certif, id_document, id_offre
+      `SELECT id_recruteur, id_entreprise, nom, prenom, ddn, mail, tel, certif, id_document, id_offre, bio, company_name, sector, job_title, linkedin, id_photo_document
        FROM recruteur
        WHERE id_recruteur = ?`,
       [idRecruteur]
@@ -31,8 +31,8 @@ export class RecruteurRepository extends BaseRepository {
     const payload = entity.toJSON();
     const [result] = await this.db.execute(
       `INSERT INTO recruteur
-       (id_entreprise, nom, prenom, ddn, mail, tel, certif, id_document, id_offre)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       (id_entreprise, nom, prenom, ddn, mail, tel, certif, id_document, id_offre, bio, company_name, sector, job_title, linkedin, id_photo_document)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         payload.id_entreprise,
         payload.nom,
@@ -43,6 +43,12 @@ export class RecruteurRepository extends BaseRepository {
         payload.certif,
         payload.id_document,
         payload.id_offre,
+        payload.bio,
+        payload.company_name,
+        payload.sector,
+        payload.job_title,
+        payload.linkedin,
+        payload.id_photo_document,
       ]
     );
 
@@ -53,7 +59,7 @@ export class RecruteurRepository extends BaseRepository {
     const payload = entity.toJSON();
     await this.db.execute(
       `UPDATE recruteur
-       SET id_entreprise = ?, nom = ?, prenom = ?, ddn = ?, mail = ?, tel = ?, certif = ?, id_document = ?, id_offre = ?
+       SET id_entreprise = ?, nom = ?, prenom = ?, ddn = ?, mail = ?, tel = ?, certif = ?, id_document = ?, id_offre = ?, bio = ?, company_name = ?, sector = ?, job_title = ?, linkedin = ?, id_photo_document = ?
        WHERE id_recruteur = ?`,
       [
         payload.id_entreprise,
@@ -65,6 +71,12 @@ export class RecruteurRepository extends BaseRepository {
         payload.certif,
         payload.id_document,
         payload.id_offre,
+        payload.bio,
+        payload.company_name,
+        payload.sector,
+        payload.job_title,
+        payload.linkedin,
+        payload.id_photo_document,
         idRecruteur,
       ]
     );
