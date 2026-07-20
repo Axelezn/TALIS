@@ -17,6 +17,7 @@ export default function LoginView() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (location.state?.message) {
@@ -27,19 +28,37 @@ export default function LoginView() {
 
   const handleChange = (e) => {
     setErrorMessage('');
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setErrors(prev => ({ ...prev, [name]: '' }));
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setIsSubmitting(true);
     setErrorMessage('');
+    const newErrors = {};
+
+    if (!formData.email.trim()) {
+      newErrors.email = "le champ E-Mail est obligatoire";
+    }
+    if (!formData.password) {
+      newErrors.password = "le champ Mot de passe est obligatoire";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      setErrorMessage('Veuillez remplir tous les champs obligatoires.');
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
       const response = await loginUser(formData);
       localStorage.setItem('talis_token', response.token);
       localStorage.setItem('talis_user', JSON.stringify(response.user));
+      window.dispatchEvent(new Event('storage'));
       navigate('/');
     } catch (error) {
       setErrorMessage(error.message || 'La connexion a échoué.');
@@ -59,9 +78,11 @@ export default function LoginView() {
             <AuthToggle />
         </div>
 
-        <form className="auth-form" onSubmit={handleSubmit}>
+        <form className="auth-form" onSubmit={handleSubmit} noValidate>
           <div className="custom-select-group">
-            <label className="text-bold">Profil</label>
+            <label className="text-bold">
+              Profil <span style={{ color: '#E84118', marginLeft: '4px', fontWeight: 'bold' }}>*</span>
+            </label>
             <select name="role" className="custom-select" value={formData.role} onChange={handleChange}>
               <option value="etudiant">Etudiant</option>
               <option value="entreprise">Entreprise</option>
@@ -79,6 +100,7 @@ export default function LoginView() {
             value={formData.email}
             onChange={handleChange}
             required
+            error={errors.email}
           />
 
           <InputField 
@@ -89,7 +111,11 @@ export default function LoginView() {
             value={formData.password}
             onChange={handleChange}
             required
+            error={errors.password}
           />
+
+          <p className="required-note">* champs obligatoires !</p>
+
           <button type="submit" className="btn btn--primary" disabled={isSubmitting}>
             {isSubmitting ? 'Connexion...' : 'Se connecter'}
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '12px' }}>

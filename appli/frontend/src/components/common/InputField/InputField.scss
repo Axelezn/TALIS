@@ -32,6 +32,14 @@
         border-color: $color-primary;
       }
 
+      &.input-error {
+        border-color: #E84118;
+        
+        &:focus {
+          box-shadow: 0 0 0 2px rgba(232, 65, 24, 0.1);
+        }
+      }
+
       &::placeholder {
         color: $color-text-light;
       }
