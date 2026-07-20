@@ -44,7 +44,7 @@ export class EntrepriseController {
   async delete(req, res) {
     try {
       await this.entrepriseService.delete(req.params.id);
-      res.status(204).send();
+      res.status(200).json({ message: 'Entreprise supprimee avec succes.' });
     } catch (error) {
       this.#handleError(error, res);
     }

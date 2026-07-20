@@ -1,0 +1,31 @@
+info:
+  name: Register (entreprise)
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{base_URL}}/api/auth/register"
+  body:
+    type: json
+    data: |-
+      {
+        "role": "entreprise",
+        "mail": "recruteur@example.com",
+        "password": "motdepasse123",
+        "nom": "Martin",
+        "prenom": "Julie",
+        "ddn": "1995-09-20",
+        "tel": "0712345678",
+        "nom_entreprise": "TechNova",
+        "adresse_entreprise": "12 rue de Paris",
+        "code_postal_entreprise": "75001",
+        "ville_entreprise": "Paris"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

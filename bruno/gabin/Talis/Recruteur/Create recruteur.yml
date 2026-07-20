@@ -1,0 +1,29 @@
+info:
+  name: Create recruteur
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{base_URL}}/api/recruteurs"
+  body:
+    type: json
+    data: |-
+      {
+        "id_entreprise": 1,
+        "nom": "Martin",
+        "prenom": "Claire",
+        "ddn": "1990-04-20",
+        "mail": "claire.martin@entreprise.com",
+        "tel": "0611223344",
+        "certif": 0,
+        "id_document": null,
+        "id_offre": null
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

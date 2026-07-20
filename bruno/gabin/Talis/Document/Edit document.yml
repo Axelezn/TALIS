@@ -1,0 +1,27 @@
+info:
+  name: Edit document
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{base_URL}}/api/documents/{{id_document}}"
+  body:
+    type: json
+    data: |
+      {
+      "nom": "cv-jean-dupont-v2.pdf",
+      "path": "/uploads/cv-jean-dupont-v2.pdf"
+      }
+  auth: inherit
+
+runtime:
+  variables:
+    - name: id_document
+      value: "1"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

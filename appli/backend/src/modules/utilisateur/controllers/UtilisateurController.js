@@ -44,7 +44,7 @@ export class UtilisateurController {
   async delete(req, res) {
     try {
       await this.utilisateurService.delete(req.params.id);
-      res.status(204).send();
+      res.status(200).json({ message: 'Utilisateur supprime avec succes.' });
     } catch (error) {
       this.#handleError(error, res);
     }
