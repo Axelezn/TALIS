@@ -46,9 +46,14 @@ export default function Hero() {
         {/* Hero Section Core Container */}
         <div className="hero-container">
           <div className="hero-content">
+            {/* Desktop Chevron Divider Overlay */}
+            <svg className="hero-chevron-overlay" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M 100,0 L 100,100 L 15,58 Q 0,50 15,42 L 100,0 Z" fill="#FFFFFF" />
+            </svg>
+
             <h1 className="hero-title">
-              Votre avenir commence ici :<br />
-              <span className="hero-title-accent">trouvez le stage ou l'alternance de vos rêves.</span>
+              Votre avenir commence ici,<br />
+              <span className="hero-title-accent">trouvez votre stagiaire ou alternant(e).</span>
             </h1>
             <p className="hero-subtitle">Mettre en relation talents ambitieux & entreprises innovantes</p>
 
