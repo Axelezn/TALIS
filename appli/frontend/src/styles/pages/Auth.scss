@@ -207,6 +207,15 @@
     .animate-fade {
       animation: fadeIn 0.3s ease-in-out;
     }
+
+    .required-note {
+      color: #E84118;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-align: left;
+      margin: 15px 0 10px 0;
+      display: block;
+    }
   }
 }
 

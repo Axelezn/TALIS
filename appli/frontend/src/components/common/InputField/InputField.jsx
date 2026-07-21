@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import './InputField.scss';
 
-export default function InputField({ label, type, placeholder, value, onChange, name, required = false }) {
+export default function InputField({ label, type, placeholder, value, onChange, name, required = false, error }) {
   const [showPassword, setShowPassword] = useState(false);
   
   const isPassword = type === 'password';
@@ -10,11 +10,15 @@ export default function InputField({ label, type, placeholder, value, onChange, 
 
   return (
     <div className="input-field-container">
-      {label && <label className="input-label">{label}</label>}
+      {label && (
+        <label className="input-label">
+          {label} {required && <span className="required-asterisk" style={{ color: '#E84118', marginLeft: '4px', fontWeight: 'bold' }}>*</span>}
+        </label>
+      )}
       
       <div className="input-wrapper">
         <input
-          className="custom-input"
+          className={`custom-input ${error ? 'input-error' : ''}`}
           type={inputType}
           placeholder={placeholder}
           value={value}
@@ -37,6 +41,11 @@ export default function InputField({ label, type, placeholder, value, onChange, 
           </button>
         )}
       </div>
+      {error && (
+        <span className="field-error-message" style={{ color: '#E84118', fontSize: '12px', marginTop: '4px', display: 'block', fontWeight: '500' }}>
+          {error}
+        </span>
+      )}
     </div>
   );
 }
