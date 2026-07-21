@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/layout/Header/Navbar';
 import LoginView from './views/LoginView';
 import Hero from './components/layout/Hero/Hero';
+import ToastContainer from './components/common/Toast/ToastContainer';
 
 // Import des styles globaux
 import './styles/main.scss';
@@ -21,6 +22,7 @@ const Home = () => {
 function App() {
   return (
     <div className="App">
+      <ToastContainer />
       <Navbar />
       <Routes>
         {/* URL : / (Accueil) */}

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import InputField from '../components/common/InputField/InputField';
 import { apiRequest } from '../services/apiClient';
-import { Camera, User, FileText, CheckCircle2, AlertCircle, Building, Phone, Mail, MapPin, GraduationCap, Save } from 'lucide-react';
+import { toast } from '../components/common/Toast/toast';
+import { Camera, User, FileText, CheckCircle2, AlertCircle, Building, Phone, Mail, MapPin, GraduationCap, Loader2 } from 'lucide-react';
 import './ProfileView.scss';
 
 export default function ProfileView() {
@@ -38,9 +39,21 @@ export default function ProfileView() {
   const [cvFileName, setCvFileName] = useState('');
   const [savedCvInfo, setSavedCvInfo] = useState(null); // { id_document, nom, path }
 
-  const [isSaving, setIsSaving] = useState(false);
-  const [notification, setNotification] = useState(null);
+  // 'idle' | 'saving' | 'saved' | 'error'
+  const [saveStatus, setSaveStatus] = useState('idle');
   const [dragOver, setDragOver] = useState(false);
+  // Incrémenté pour rejouer une sauvegarde restée en attente avec un état
+  // à jour (voir pendingSaveRef plus bas) une fois la sauvegarde en cours terminée.
+  const [saveQueueTick, setSaveQueueTick] = useState(0);
+
+  // Autosave doit rester désarmé tant que le profil initial n'est pas
+  // entièrement chargé, sinon le peuplement du formulaire déclenche
+  // lui-même une sauvegarde inutile juste après le montage.
+  const autosaveArmedRef = useRef(false);
+  const isSavingRef = useRef(false);
+  // Marque qu'un changement est arrivé pendant une sauvegarde déjà en cours,
+  // pour ne pas le perdre : on relance dès que la sauvegarde en cours finit.
+  const pendingSaveRef = useRef(false);
 
   // Load and sync user profile from DB/localStorage on mount
   useEffect(() => {
@@ -110,7 +123,15 @@ export default function ProfileView() {
         console.error('Failed to parse user storage', e);
       }
     }
-    loadUserProfile();
+
+    loadUserProfile().then(() => {
+      // Armé sur un tick séparé : le peuplement du formulaire ci-dessus a
+      // déjà été traité par React à ce moment-là, donc l'effet d'autosave
+      // ne se déclenchera qu'à partir d'une vraie modification utilisateur.
+      setTimeout(() => {
+        autosaveArmedRef.current = true;
+      }, 0);
+    });
   }, []);
 
   const updateFormValues = (user, doc) => {
@@ -150,14 +171,13 @@ export default function ProfileView() {
   const handlePhotoUpload = (file) => {
     if (!file) return;
     if (!file.type.startsWith('image/')) {
-      showNotification('error', 'Veuillez sélectionner une image valide.');
+      toast.error('Veuillez sélectionner une image valide.');
       return;
     }
     const reader = new FileReader();
     reader.onload = (e) => {
       setAvatar(e.target.result);
       setAvatarName(file.name);
-      showNotification('success', 'Photo de profil mise à jour localement !');
     };
     reader.readAsDataURL(file);
   };
@@ -183,29 +203,26 @@ export default function ProfileView() {
     const file = e.target.files[0];
     if (file) {
       if (file.type !== 'application/pdf') {
-        showNotification('error', 'Seuls les fichiers PDF sont acceptés.');
+        toast.error('Seuls les fichiers PDF sont acceptés.');
         return;
       }
-      
+
       const reader = new FileReader();
       reader.onload = (readEvent) => {
         setCvFileBase64(readEvent.target.result);
         setCvFileName(file.name);
-        showNotification('success', `CV PDF "${file.name}" prêt à l'envoi !`);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const showNotification = (type, text) => {
-    setNotification({ type, text });
-    setTimeout(() => setNotification(null), 5000);
-  };
-
-  // Upload document files to backend and save profile to Database
-  const handleSaveProfile = async (e) => {
-    e.preventDefault();
-    setIsSaving(true);
+  // Upload document files to backend and save profile to Database.
+  // Appelé automatiquement par l'autosave (voir effet plus bas), plus besoin
+  // de bouton "Enregistrer" manuel. La garde anti-chevauchement est gérée
+  // par l'appelant (l'effet d'autosave), pas ici.
+  const saveProfile = async () => {
+    isSavingRef.current = true;
+    setSaveStatus('saving');
     const token = localStorage.getItem('talis_token');
 
     try {
@@ -213,7 +230,6 @@ export default function ProfileView() {
 
       // 1. Process CV Upload First if a new file is loaded in memory
       if (cvFileBase64) {
-        showNotification('success', "Envoi du CV vers la table 'document'...");
         try {
           const docRow = await apiRequest('/documents', {
             method: 'POST',
@@ -229,8 +245,9 @@ export default function ProfileView() {
           console.log('[Upload success] Stored file row in Table Document:', docRow);
         } catch (uploadErr) {
           console.error('File upload failed', uploadErr);
-          showNotification('error', "Échec de l'intégration du fichier CV dans la table document.");
-          setIsSaving(false);
+          toast.error("Échec de l'intégration du fichier CV dans la table document.");
+          setSaveStatus('error');
+          isSavingRef.current = false;
           return;
         }
       }
@@ -239,7 +256,6 @@ export default function ProfileView() {
       let photoPathOrBase64 = avatar;
       let linkedPhotoDocId = currentUser.id_photo_document || null;
       if (avatar && avatar.startsWith('data:image/')) {
-        showNotification('success', "Envoi de la photo de profil...");
         try {
           const photoRow = await apiRequest('/documents', {
             method: 'POST',
@@ -332,18 +348,43 @@ export default function ProfileView() {
       // 4. Save to local application state
       localStorage.setItem('talis_user', JSON.stringify(updatedUserCopy));
       setCurrentUser(updatedUserCopy);
-      
+
       // Notify parent components (like Navbar) to sync avatar updates
       window.dispatchEvent(new Event('storage'));
-      showNotification('success', 'Votre profil et vos documents ont été enregistrés avec succès !');
+      setSaveStatus('saved');
 
     } catch (err) {
       console.error('Failed to update user profile in MySQL', err);
-      showNotification('error', `Erreur de sauvegarde : ${err.message || "Impossible de joindre l'API"}`);
+      toast.error(`Erreur de sauvegarde : ${err.message || "Impossible de joindre l'API"}`);
+      setSaveStatus('error');
     } finally {
-      setIsSaving(false);
+      isSavingRef.current = false;
+
+      // Un changement est arrivé pendant cette sauvegarde : on relance tout
+      // de suite avec les données à jour (via un nouveau rendu, pour éviter
+      // de rappeler cette même closure figée sur l'ancien formData).
+      if (pendingSaveRef.current) {
+        pendingSaveRef.current = false;
+        setSaveQueueTick((n) => n + 1);
+      }
     }
   };
+
+  // Autosave événementiel : chaque modification du formulaire, de la photo
+  // ou du CV déclenche la sauvegarde immédiatement, sans délai ni bouton
+  // manuel. Si une sauvegarde est déjà en cours, le changement est mis en
+  // attente et rejoué dès qu'elle se termine (voir pendingSaveRef ci-dessus).
+  useEffect(() => {
+    if (!autosaveArmedRef.current) return;
+
+    if (isSavingRef.current) {
+      pendingSaveRef.current = true;
+      return;
+    }
+
+    saveProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData, avatar, cvFileBase64, saveQueueTick]);
 
   if (!currentUser) return null;
 
@@ -354,18 +395,17 @@ export default function ProfileView() {
       
       <div className="profile-content">
         
-        {/* Page Title & Alert Banner */}
+        {/* Page Title & Autosave status */}
         <div className="profile-header">
-          <h1>Mon Profil Utilisateur</h1>
-          <p>Personnalisez vos informations générales, intégrez vos documents, vos CVs ou photos clés.</p>
-        </div>
-
-        {notification && (
-          <div className={`alert-banner alert-banner--${notification.type}`}>
-            {notification.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
-            <span>{notification.text}</span>
+          <div className="profile-header__top">
+            <h1>Mon Profil Utilisateur</h1>
+            <div className={`autosave-status autosave-status--${saveStatus}`}>
+              {saveStatus === 'saving' && <><Loader2 size={14} className="spin" /> Enregistrement...</>}
+              {saveStatus === 'saved' && <><CheckCircle2 size={14} /> Enregistré</>}
+              {saveStatus === 'error' && <><AlertCircle size={14} /> Échec de l'enregistrement</>}
+            </div>
           </div>
-        )}
+        </div>
 
         {/* Layout Grid columns */}
         <div className="profile-grid">
@@ -426,7 +466,7 @@ export default function ProfileView() {
 
           {/* MAIN FORM CARD */}
           <div className="profile-main-card">
-            <form onSubmit={handleSaveProfile}>
+            <form onSubmit={(e) => e.preventDefault()}>
               
               {/* SECTION: Identity */}
               <div className="form-section">
@@ -662,17 +702,6 @@ export default function ProfileView() {
                   </div>
                 </div>
               )}
-
-              {/* FOOTER SUBMIT */}
-              <div className="form-submit-row">
-                <button 
-                  type="submit"
-                  disabled={isSaving}
-                >
-                  <Save size={14} />
-                  {isSaving ? "Enregistrement..." : "Enregistrer mon profil et mes CVs"}
-                </button>
-              </div>
 
             </form>
           </div>

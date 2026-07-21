@@ -4,7 +4,7 @@ import './InputField.scss';
 
 export default function InputField({ label, type, placeholder, value, onChange, name, required = false, error }) {
   const [showPassword, setShowPassword] = useState(false);
-  
+
   const isPassword = type === 'password';
   const inputType = isPassword && showPassword ? 'text' : type;
 
@@ -15,7 +15,7 @@ export default function InputField({ label, type, placeholder, value, onChange, 
           {label} {required && <span className="required-asterisk" style={{ color: '#E84118', marginLeft: '4px', fontWeight: 'bold' }}>*</span>}
         </label>
       )}
-      
+
       <div className="input-wrapper">
         <input
           className={`custom-input ${error ? 'input-error' : ''}`}
