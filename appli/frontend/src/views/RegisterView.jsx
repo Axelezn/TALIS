@@ -4,6 +4,7 @@ import InputField from '../components/common/InputField/InputField';
 import AuthToggle from '../components/auth/AuthToggle';
 import talisLogoFull from '../assets/talis_logo_full.png';
 import { registerUser } from '../services/authService';
+import { toast } from '../components/common/Toast/toast';
 import '../styles/pages/Auth.scss';
 
 export default function RegisterView() {
@@ -11,7 +12,6 @@ export default function RegisterView() {
   const [step, setStep] = useState(1);
   const [role, setRole] = useState('etudiant'); // 'etudiant' ou 'entreprise'
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
   const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
@@ -24,14 +24,12 @@ export default function RegisterView() {
   });
 
   const handleChange = (e) => {
-    setErrorMessage('');
     const { name, value } = e.target;
     setErrors(prev => ({ ...prev, [name]: '' }));
     setFormData({ ...formData, [name]: value });
   };
 
   const handleNextStep = () => {
-    setErrorMessage('');
     const newErrors = {};
 
     if (!formData.lastName.trim()) {
@@ -67,7 +65,7 @@ export default function RegisterView() {
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      setErrorMessage('Veuillez remplir tous les champs obligatoires.');
+      toast.error('Veuillez remplir tous les champs obligatoires.');
       return;
     }
 
@@ -75,7 +73,7 @@ export default function RegisterView() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email.trim())) {
       setErrors({ email: "L'adresse e-mail n'est pas valide." });
-      setErrorMessage('L\'adresse e-mail n\'est pas valide.');
+      toast.error('L\'adresse e-mail n\'est pas valide.');
       return;
     }
 
@@ -83,7 +81,7 @@ export default function RegisterView() {
     const zipRegex = /^\d{1,5}$/;
     if (!zipRegex.test(formData.zipCode.trim())) {
       setErrors({ zipCode: "Le code postal doit être composé uniquement de chiffres (maximum 5 caractères)." });
-      setErrorMessage('Le code postal doit être composé uniquement de chiffres (maximum 5 caractères).');
+      toast.error('Le code postal doit être composé uniquement de chiffres (maximum 5 caractères).');
       return;
     }
 
@@ -92,7 +90,7 @@ export default function RegisterView() {
     const phoneRegex = /^(?:(?:\+|00)\d{1,4}|0)[1-9]\d{8,14}$/;
     if (!phoneRegex.test(cleanPhone)) {
       setErrors({ phone: "Le numéro de téléphone n'est pas valide (ex: 0612345678)." });
-      setErrorMessage('Le numéro de téléphone n\'est pas valide (ex: 0612345678).');
+      toast.error('Le numéro de téléphone n\'est pas valide (ex: 0612345678).');
       return;
     }
 
@@ -106,31 +104,29 @@ export default function RegisterView() {
     }
     if (age < 15) {
       setErrors({ ddn: "Vous devez avoir au moins 15 ans pour accéder au site." });
-      setErrorMessage('Vous devez avoir au moins 15 ans pour accéder au site.');
+      toast.error('Vous devez avoir au moins 15 ans pour accéder au site.');
       return;
     }
 
     // 6. Validate password match and length
     if (formData.password !== formData.confirmPassword) {
       setErrors({ confirmPassword: "Les mots de passe ne correspondent pas." });
-      setErrorMessage('Les mots de passe ne correspondent pas.');
+      toast.error('Les mots de passe ne correspondent pas.');
       return;
     }
 
     if (formData.password.length < 8) {
       setErrors({ password: "Le mot de passe doit contenir au moins 8 caractères." });
-      setErrorMessage('Le mot de passe doit contenir au moins 8 caractères.');
+      toast.error('Le mot de passe doit contenir au moins 8 caractères.');
       return;
     }
 
     setErrors({});
-    setErrorMessage('');
     setStep(2);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage('');
     const newErrors = {};
 
     // Check Step 2 empty fields
@@ -183,7 +179,7 @@ export default function RegisterView() {
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      setErrorMessage('Veuillez remplir tous les champs obligatoires.');
+      toast.error('Veuillez remplir tous les champs obligatoires.');
       return;
     }
 
@@ -199,7 +195,7 @@ export default function RegisterView() {
         state: { message: 'Compte créé avec succès, vous pouvez vous connecter.' },
       });
     } catch (error) {
-      setErrorMessage(error.message || 'La création du compte a échoué.');
+      toast.error(error.message || 'La création du compte a échoué.');
     } finally {
       setIsSubmitting(false);
     }
@@ -214,8 +210,6 @@ export default function RegisterView() {
         <AuthToggle />
 
         <form className="auth-form" onSubmit={handleSubmit} noValidate>
-          {errorMessage ? <p className="auth-feedback auth-feedback--error">{errorMessage}</p> : null}
-
           {step === 1 && (
             <div className="step-content">
               <h2 className="h2-style text-small-title">Vos informations personnelles</h2>
@@ -259,7 +253,6 @@ export default function RegisterView() {
                   onClick={() => {
                     setRole('etudiant');
                     setErrors({});
-                    setErrorMessage('');
                   }}
                 >Étudiant</button>
                 <button 
@@ -268,7 +261,6 @@ export default function RegisterView() {
                   onClick={() => {
                     setRole('entreprise');
                     setErrors({});
-                    setErrorMessage('');
                   }}
                 >Entreprise</button>
               </div>
