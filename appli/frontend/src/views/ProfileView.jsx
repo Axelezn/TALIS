@@ -118,7 +118,7 @@ export default function ProfileView() {
           }
         }
 
-        updateFormValues(dbUser, dbDoc);
+        updateFormValues(dbUser);
       } catch (e) {
         console.error('Failed to parse user storage', e);
       }
@@ -134,7 +134,7 @@ export default function ProfileView() {
     });
   }, []);
 
-  const updateFormValues = (user, doc) => {
+  const updateFormValues = (user) => {
     // Check role to load corresponding parameters (handling both snake_case and camelCase parameters)
     setFormData({
       firstName: user.prenom || '',

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import talisLogoFull from "../../../assets/talis_logo_full.png";
 import heroGroupImage from "../../../assets/hero_img.png";
 import "./Hero.scss";
 
