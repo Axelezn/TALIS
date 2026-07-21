@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import InputField from '../components/common/InputField/InputField';
 import talisLogoFull from '../assets/talis_logo_full.png';
 import AuthToggle from '../components/auth/AuthToggle';
 import { loginUser } from '../services/authService';
+import { toast } from '../components/common/Toast/toast';
 import '../styles/pages/Auth.scss';
 
 export default function LoginView() {
@@ -15,18 +16,22 @@ export default function LoginView() {
     password: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+
+  // Ref (et non un state) car elle doit survivre au double-appel de l'effet
+  // fait par StrictMode en dev, qui sinon affiche ce toast deux fois avant
+  // que le navigate(replace) ci-dessous n'ait vidé location.state.
+  const shownRedirectMessageRef = useRef(null);
 
   useEffect(() => {
-    if (location.state?.message) {
-      setSuccessMessage(location.state.message);
+    const message = location.state?.message;
+    if (message && shownRedirectMessageRef.current !== message) {
+      shownRedirectMessageRef.current = message;
+      toast.success(message);
       navigate(location.pathname, { replace: true, state: {} });
     }
   }, [location.pathname, location.state, navigate]);
 
   const handleChange = (e) => {
-    setErrorMessage('');
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -34,15 +39,15 @@ export default function LoginView() {
     e.preventDefault();
 
     setIsSubmitting(true);
-    setErrorMessage('');
 
     try {
       const response = await loginUser(formData);
       localStorage.setItem('talis_token', response.token);
       localStorage.setItem('talis_user', JSON.stringify(response.user));
+      toast.success(`Bon retour, ${response.user?.prenom || 'sur TALIS'} !`);
       navigate('/');
     } catch (error) {
-      setErrorMessage(error.message || 'La connexion a échoué.');
+      toast.error(error.message || 'La connexion a échoué.');
     } finally {
       setIsSubmitting(false);
     }
@@ -68,10 +73,7 @@ export default function LoginView() {
             </select>
           </div>
 
-          {successMessage ? <p className="auth-feedback auth-feedback--success">{successMessage}</p> : null}
-          {errorMessage ? <p className="auth-feedback auth-feedback--error">{errorMessage}</p> : null}
-
-          <InputField 
+          <InputField
             label="E-Mail"
             type="email"
             name="email"

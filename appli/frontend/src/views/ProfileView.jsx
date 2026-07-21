@@ -6,8 +6,6 @@ import { toast } from '../components/common/Toast/toast';
 import { Camera, User, FileText, CheckCircle2, AlertCircle, Building, Phone, Mail, MapPin, GraduationCap, Loader2 } from 'lucide-react';
 import './ProfileView.scss';
 
-const AUTOSAVE_DELAY_MS = 1200;
-
 export default function ProfileView() {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(null);
@@ -44,13 +42,18 @@ export default function ProfileView() {
   // 'idle' | 'saving' | 'saved' | 'error'
   const [saveStatus, setSaveStatus] = useState('idle');
   const [dragOver, setDragOver] = useState(false);
+  // Incrémenté pour rejouer une sauvegarde restée en attente avec un état
+  // à jour (voir pendingSaveRef plus bas) une fois la sauvegarde en cours terminée.
+  const [saveQueueTick, setSaveQueueTick] = useState(0);
 
   // Autosave doit rester désarmé tant que le profil initial n'est pas
   // entièrement chargé, sinon le peuplement du formulaire déclenche
   // lui-même une sauvegarde inutile juste après le montage.
   const autosaveArmedRef = useRef(false);
-  const autosaveTimerRef = useRef(null);
   const isSavingRef = useRef(false);
+  // Marque qu'un changement est arrivé pendant une sauvegarde déjà en cours,
+  // pour ne pas le perdre : on relance dès que la sauvegarde en cours finit.
+  const pendingSaveRef = useRef(false);
 
   // Load and sync user profile from DB/localStorage on mount
   useEffect(() => {
@@ -215,9 +218,9 @@ export default function ProfileView() {
 
   // Upload document files to backend and save profile to Database.
   // Appelé automatiquement par l'autosave (voir effet plus bas), plus besoin
-  // de bouton "Enregistrer" manuel.
+  // de bouton "Enregistrer" manuel. La garde anti-chevauchement est gérée
+  // par l'appelant (l'effet d'autosave), pas ici.
   const saveProfile = async () => {
-    if (isSavingRef.current) return;
     isSavingRef.current = true;
     setSaveStatus('saving');
     const token = localStorage.getItem('talis_token');
@@ -356,26 +359,32 @@ export default function ProfileView() {
       setSaveStatus('error');
     } finally {
       isSavingRef.current = false;
+
+      // Un changement est arrivé pendant cette sauvegarde : on relance tout
+      // de suite avec les données à jour (via un nouveau rendu, pour éviter
+      // de rappeler cette même closure figée sur l'ancien formData).
+      if (pendingSaveRef.current) {
+        pendingSaveRef.current = false;
+        setSaveQueueTick((n) => n + 1);
+      }
     }
   };
 
-  // Autosave : toute modification du formulaire, de la photo ou du CV
-  // déclenche une sauvegarde après une courte pause d'inactivité, sans
-  // action manuelle de l'utilisateur.
+  // Autosave événementiel : chaque modification du formulaire, de la photo
+  // ou du CV déclenche la sauvegarde immédiatement, sans délai ni bouton
+  // manuel. Si une sauvegarde est déjà en cours, le changement est mis en
+  // attente et rejoué dès qu'elle se termine (voir pendingSaveRef ci-dessus).
   useEffect(() => {
     if (!autosaveArmedRef.current) return;
 
-    if (autosaveTimerRef.current) {
-      clearTimeout(autosaveTimerRef.current);
+    if (isSavingRef.current) {
+      pendingSaveRef.current = true;
+      return;
     }
 
-    autosaveTimerRef.current = setTimeout(() => {
-      saveProfile();
-    }, AUTOSAVE_DELAY_MS);
-
-    return () => clearTimeout(autosaveTimerRef.current);
+    saveProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData, avatar, cvFileBase64]);
+  }, [formData, avatar, cvFileBase64, saveQueueTick]);
 
   if (!currentUser) return null;
 
@@ -396,7 +405,6 @@ export default function ProfileView() {
               {saveStatus === 'error' && <><AlertCircle size={14} /> Échec de l'enregistrement</>}
             </div>
           </div>
-          <p>Personnalisez vos informations générales, intégrez vos documents, vos CVs ou photos clés. Tout est enregistré automatiquement.</p>
         </div>
 
         {/* Layout Grid columns */}
