@@ -1,5 +1,5 @@
-@use '../../../styles/abstracts' as *;
 @use 'sass:color';
+@use '../../../styles/abstracts' as *;
 
 // --- HERO SCSS STYLE ---
 
@@ -87,10 +87,16 @@
     width: 100%;
     
     @media (min-width: $desktop) {
-      flex-direction: row-reverse; // Puts image on left, text content on right in desktop!
+      flex-direction: row-reverse; // Image on left, Content on right
       min-height: 520px;
       align-items: stretch;
       background-color: $color-white;
+      max-width: 1200px;
+      margin: 24px auto; // Beautiful breathing space
+      border-radius: $radius-lg;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(0, 0, 0, 0.04);
+      overflow: hidden;
     }
   }
 }
@@ -107,14 +113,28 @@
   @media (min-width: $desktop) {
     flex: 1 1 50%;
     background-color: $color-white;
-    padding: 60px 60px 60px 140px; // Padding on left to offset slant overlay
-    align-items: flex-start;
-    text-align: left;
+    padding: 60px 50px;
+    align-items: center;
+    text-align: center;
     justify-content: center;
     position: relative;
-    margin-left: -120px; // Pull content block over the left image block to enable chevron visual
     z-index: 2;
-    clip-path: polygon(120px 0, 100% 0, 100% 100%, 120px 100%, 0 45%); // Chevron/Vertex pointing leftward!
+  }
+
+  .hero-chevron-overlay {
+    display: none;
+
+    @media (min-width: $desktop) {
+      display: block;
+      width: 60px;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform: translateX(-100%);
+      z-index: 3;
+      pointer-events: none;
+    }
   }
 }
 
@@ -134,12 +154,12 @@
   }
 
   @media (min-width: $desktop) {
-    font-size: 26px;
+    font-size: 32px;
     color: $color-primary; // Lavander color on desktop!
     line-height: 1.25;
 
     span, .hero-title-accent {
-      font-size: 26px;
+      font-size: 32px;
       color: $color-primary; // Matching lavander color
     }
   }
@@ -150,11 +170,13 @@
 
   @media (min-width: $desktop) {
     display: block;
-    font-size: 13px;
-    color: #A3A3C2; // Soft light violet-blue tone
+    font-size: 14px;
+    color: #B9AAF9; // Soft light violet-blue tone
     font-weight: 500;
-    margin-bottom: 32px;
+    margin: 0 auto 32px auto;
     max-width: 500px;
+    text-align: center;
+    opacity: 0.85;
   }
 }
 
@@ -170,8 +192,9 @@
   @media (min-width: $desktop) {
     width: 100%;
     max-width: 520px;
-    align-items: flex-start;
+    align-items: center;
     gap: 20px;
+    margin: 0 auto;
   }
 }
 
@@ -247,7 +270,7 @@
   margin-top: 4px;
 
   @media (min-width: $desktop) {
-    justify-content: flex-start;
+    justify-content: center;
     margin-top: 0;
   }
 }
@@ -293,15 +316,16 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: left center;
   }
 
   @media (min-width: $desktop) {
     flex: 1 1 50%;
-    height: auto;
+    height: 520px;
     min-height: 520px;
+    max-height: 520px;
     z-index: 1;
     position: relative;
-    clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%); // Optional matching cutout to reinforce visual structure
   }
 }
 
@@ -370,6 +394,7 @@
   justify-content: center;
   text-align: center;
   min-height: 110px;
+  cursor: pointer;
   transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
 

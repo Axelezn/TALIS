@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import talisLogoFull from "../../../assets/talis_logo_full.png";
 import heroGroupImage from "../../../assets/hero_img.png";
 import "./Hero.scss";
@@ -7,6 +7,7 @@ import "./Hero.scss";
 export default function Hero() {
   const categories = ["Marketing", "Informatique", "Commerce"];
   const location = useLocation();
+  const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(Boolean(localStorage.getItem("talis_token")));
 
   useEffect(() => {
@@ -21,34 +22,17 @@ export default function Hero() {
   return (
     <div className="hero-page-wrapper">
       <header className="hero-section">
-        {/* Navigation Bar for mobile header display as requested */}
-        <div className="hero-nav">
-          <button type="button" className="nav-icon nav-icon--bell" aria-label="Notifications">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0" />
-            </svg>
-            <span className="bell-dot"></span>
-          </button>
-          
-          <div className="nav-logo">
-            <img src={talisLogoFull} alt="Talis Logo" />
-          </div>
-          
-          <button type="button" className="nav-icon nav-icon--burger" aria-label="Menu">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
-          </button>
-        </div>
-
         {/* Hero Section Core Container */}
         <div className="hero-container">
           <div className="hero-content">
+            {/* Desktop Chevron Divider Overlay */}
+            <svg className="hero-chevron-overlay" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M 100,0 L 100,100 L 15,58 Q 0,50 15,42 L 100,0 Z" fill="#FFFFFF" />
+            </svg>
+
             <h1 className="hero-title">
-              Votre avenir commence ici :<br />
-              <span className="hero-title-accent">trouvez le stage ou l'alternance de vos rêves.</span>
+              Votre avenir commence ici,<br />
+              <span className="hero-title-accent">trouvez votre stagiaire ou alternant(e).</span>
             </h1>
             <p className="hero-subtitle">Mettre en relation talents ambitieux & entreprises innovantes</p>
 
@@ -85,7 +69,7 @@ export default function Hero() {
         <div className={`cards-grid ${isAuthenticated ? 'cards-grid--authenticated' : ''}`}>
           
           {!isAuthenticated && (
-            <div className="work-card">
+            <div className="work-card" onClick={() => navigate("/register")}>
               <div className="card-icon card-icon--purple">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
@@ -98,7 +82,7 @@ export default function Hero() {
             </div>
           )}
 
-          <div className="work-card">
+          <div className="work-card" onClick={() => navigate("/offres")}>
             <div className="card-icon card-icon--purple-blue">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -110,7 +94,11 @@ export default function Hero() {
             <h3 className="card-label">Explorer les offres</h3>
           </div>
 
-          <div className="work-card">
+          <div 
+            className="work-card" 
+            onClick={!isAuthenticated ? () => navigate("/login") : undefined}
+            style={isAuthenticated ? { cursor: "default" } : undefined}
+          >
             <div className="card-icon card-icon--blue">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
