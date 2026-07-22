@@ -14,6 +14,24 @@ export class DemandeController {
     }
   }
 
+  async getByUser(req, res) {
+    try {
+      const demandes = await this.demandeService.getByUser(req.params.idUser);
+      res.status(200).json(demandes.map((item) => item.toJSON()));
+    } catch (error) {
+      this.#handleError(error, res);
+    }
+  }
+
+  async getByEntreprise(req, res) {
+    try {
+      const demandes = await this.demandeService.getByEntreprise(req.params.idEntreprise);
+      res.status(200).json(demandes.map((item) => item.toJSON()));
+    } catch (error) {
+      this.#handleError(error, res);
+    }
+  }
+
   async getById(req, res) {
     try {
       const demande = await this.demandeService.getById(req.params.id);

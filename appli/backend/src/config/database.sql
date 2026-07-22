@@ -26,12 +26,14 @@ CREATE TABLE IF NOT EXISTS offre (
     id_offre INT(11) NOT NULL AUTO_INCREMENT,
     type VARCHAR(50) NULL,
     titre VARCHAR(200) NULL,
+    id_entreprise INT(11) NULL,
     date_send DATE NULL,
     date_stop DATE NULL,
     remuneration DOUBLE NULL,
     description TEXT NULL,
-    entreprise VARCHAR(255) NULL,
-    PRIMARY KEY (id_offre)
+    PRIMARY KEY (id_offre),
+    KEY fk_offre_entreprise (id_entreprise),
+    CONSTRAINT fk_offre_entreprise FOREIGN KEY (id_entreprise) REFERENCES entreprise(id_entreprise)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- 4. Table user (Étudiants / Candidats)
@@ -98,7 +100,8 @@ CREATE TABLE IF NOT EXISTS demande (
     id_demande INT(11) NOT NULL AUTO_INCREMENT,
     id_user INT(11) NOT NULL,
     id_offre INT(11) NOT NULL,
-    demande VARCHAR(100) NULL,
+    date_envoi DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+    demande VARCHAR(100) NOT NULL DEFAULT 'En attente',
     PRIMARY KEY (id_demande),
     UNIQUE KEY uq_demande_user_offre (id_user, id_offre),
     KEY fk_demande_offre (id_offre),

@@ -11,6 +11,8 @@ export function setupDemandeModule(db) {
 	const controller = new DemandeController(service);
 
 	router.get('/', (req, res) => controller.getAll(req, res));
+	router.get('/user/:idUser', (req, res) => controller.getByUser(req, res));
+	router.get('/entreprise/:idEntreprise', (req, res) => controller.getByEntreprise(req, res));
 	router.get('/:id', (req, res) => controller.getById(req, res));
 	router.post('/', (req, res) => controller.create(req, res));
 	router.put('/:id', (req, res) => controller.update(req, res));
