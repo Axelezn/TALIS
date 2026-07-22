@@ -81,6 +81,40 @@ export function toOptionalNumber(value, fieldName) {
   return parsed;
 }
 
+export function toRequiredString(value, fieldName, maxLength) {
+  const normalized = toOptionalString(value, fieldName, maxLength);
+  if (!normalized) {
+    throw new Error(`${fieldName} est obligatoire.`);
+  }
+
+  return normalized;
+}
+
+export function toRequiredEnum(value, fieldName, allowedValues) {
+  if (value === undefined || value === null || value === '') {
+    throw new Error(`${fieldName} est obligatoire.`);
+  }
+
+  if (!allowedValues.includes(value)) {
+    throw new Error(`${fieldName} doit valoir : ${allowedValues.join(', ')}.`);
+  }
+
+  return value;
+}
+
+export function toOptionalDateTime(value, fieldName) {
+  if (value === undefined || value === null || value === '') {
+    return null;
+  }
+
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    throw new Error(`${fieldName} doit être une date/heure valide.`);
+  }
+
+  return date.toISOString();
+}
+
 export function toOptionalTinyIntFlag(value, fieldName) {
   if (value === undefined || value === null || value === '') {
     return null;

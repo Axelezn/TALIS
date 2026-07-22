@@ -108,3 +108,21 @@ CREATE TABLE IF NOT EXISTS demande (
     CONSTRAINT fk_demande_offre FOREIGN KEY (id_offre) REFERENCES offre(id_offre),
     CONSTRAINT fk_demande_user FOREIGN KEY (id_user) REFERENCES `user`(id_user)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 7. Table message (Chat entre un candidat et le recruteur, rattaché à une demande)
+-- expediteur_id pointe vers user.id_user si expediteur_role = 'etudiant',
+-- ou vers recruteur.id_recruteur si expediteur_role = 'entreprise' (relation polymorphe,
+-- pas de FK directe possible puisque la cible dépend du rôle).
+CREATE TABLE IF NOT EXISTS message (
+    id_message INT(11) NOT NULL AUTO_INCREMENT,
+    id_demande INT(11) NOT NULL,
+    expediteur_role VARCHAR(20) NOT NULL,
+    expediteur_id INT(11) NOT NULL,
+    contenu TEXT NOT NULL,
+    date_envoi DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    lu TINYINT(1) NOT NULL DEFAULT 0,
+    PRIMARY KEY (id_message),
+    KEY fk_message_demande (id_demande),
+    KEY idx_message_demande_date (id_demande, date_envoi),
+    CONSTRAINT fk_message_demande FOREIGN KEY (id_demande) REFERENCES demande(id_demande)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

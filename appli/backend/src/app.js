@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
+import http from 'http';
 import { createDbPool } from './config/db.js';
 import { setupUtilisateurModule } from './modules/utilisateur/index.js';
 import { setupDocumentModule } from './modules/document/index.js';
@@ -8,6 +9,8 @@ import { setupEntrepriseModule } from './modules/entreprise/index.js';
 import { setupOffreModule } from './modules/offre/index.js';
 import { setupRecruteurModule } from './modules/recruteur/index.js';
 import { setupDemandeModule } from './modules/demande/index.js';
+import { setupMessageModule } from './modules/message/index.js';
+import { attachChatSocketServer } from './modules/message/websocket/ChatSocketServer.js';
 import { setupAuthModule } from './modules/auth/index.js';
 import { AppError } from './core/AppError.js';
 
@@ -41,6 +44,7 @@ app.use('/api/entreprises', setupEntrepriseModule(db));
 app.use('/api/offres', setupOffreModule(db));
 app.use('/api/recruteurs', setupRecruteurModule(db));
 app.use('/api/demandes', setupDemandeModule(db));
+app.use('/api/messages', setupMessageModule(db));
 app.use('/api/auth', setupAuthModule(db));
 
 app.use((req, res) => {
@@ -56,6 +60,9 @@ app.use((error, req, res, next) => {
 	return res.status(500).json({ message: 'Erreur interne du serveur' });
 });
 
+const server = http.createServer(app);
+attachChatSocketServer(server, db);
+
 async function startServer() {
 	try {
 		await db.execute('SELECT 1');
@@ -64,7 +71,7 @@ async function startServer() {
 		console.error('[DB] Echec de connexion a la base de donnees :', error.message);
 	}
 
-	app.listen(port, () => {
+	server.listen(port, () => {
 		console.log(`Backend TALIS lance sur le port ${port}`);
 	});
 }
