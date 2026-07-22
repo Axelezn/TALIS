@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS offre (
     date_stop DATE NULL,
     remuneration DOUBLE NULL,
     description TEXT NULL,
+    entreprise VARCHAR(255) NULL,
     PRIMARY KEY (id_offre)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
