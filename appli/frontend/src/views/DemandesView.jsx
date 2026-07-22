@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronDown, MapPin, Calendar, Briefcase, Building, User, Mail, Inbox } from 'lucide-react';
+import { ChevronDown, MapPin, Calendar, Briefcase, Building, User, Mail, Inbox, MessageCircle } from 'lucide-react';
 import { getDemandesByUser, getDemandesByEntreprise, updateDemandeStatut } from '../services/demandeService';
 import { toast } from '../components/common/Toast/toast';
+import ChatDrawer from '../components/chat/ChatDrawer';
 import './DemandesView.scss';
 
 const STATUTS_RECRUTEUR = ['En attente', 'Acceptée', 'Refusée'];
@@ -17,6 +18,7 @@ export default function DemandesView() {
   const [error, setError] = useState('');
   const [expandedIds, setExpandedIds] = useState(new Set());
   const [statutUpdating, setStatutUpdating] = useState(null);
+  const [chatDemande, setChatDemande] = useState(null);
 
   useEffect(() => {
     const rawUser = localStorage.getItem('talis_user');
@@ -202,6 +204,14 @@ export default function DemandesView() {
                       <span>Envoyée le : {formatDateDisplay(demande.date_envoi)}</span>
                     </div>
 
+                    <button
+                      type="button"
+                      className="chat-trigger-btn"
+                      onClick={() => setChatDemande(demande)}
+                    >
+                      <MessageCircle size={16} /> Discuter avec {isRecruiter ? 'le candidat' : "l'entreprise"}
+                    </button>
+
                     {isRecruiter && (
                       <div className="detail-actions">
                         <span className="detail-actions__label">
@@ -230,6 +240,17 @@ export default function DemandesView() {
         </div>
       )}
       </div>
+
+      {chatDemande && (
+        <ChatDrawer
+          key={chatDemande.id_demande}
+          demande={chatDemande}
+          isRecruiter={isRecruiter}
+          currentUser={currentUser}
+          token={token}
+          onClose={() => setChatDemande(null)}
+        />
+      )}
     </div>
   );
 }
