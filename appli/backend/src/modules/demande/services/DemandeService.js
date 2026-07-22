@@ -11,6 +11,16 @@ export class DemandeService {
     return this.demandeRepository.getAll();
   }
 
+  async getByUser(idUser) {
+    const parsedId = toRequiredPositiveInt(idUser, 'id_user');
+    return this.demandeRepository.getByUser(parsedId);
+  }
+
+  async getByEntreprise(idEntreprise) {
+    const parsedId = toRequiredPositiveInt(idEntreprise, 'id_entreprise');
+    return this.demandeRepository.getByEntreprise(parsedId);
+  }
+
   async getById(idDemande) {
     const parsedId = toRequiredPositiveInt(idDemande, 'id_demande');
     const demande = await this.demandeRepository.getById(parsedId);

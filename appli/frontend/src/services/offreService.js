@@ -20,7 +20,7 @@ export async function createOffre(payload, token) {
       date_stop: payload.date_stop,
       remuneration: payload.remuneration ? Number(payload.remuneration) : null,
       description: payload.description,
-      entreprise: payload.entreprise,
+      id_entreprise: payload.id_entreprise,
     },
     token,
   });
@@ -35,7 +35,7 @@ export async function updateOffre(idOffre, payload, token) {
       date_stop: payload.date_stop,
       remuneration: payload.remuneration ? Number(payload.remuneration) : null,
       description: payload.description,
-      entreprise: payload.entreprise,
+      id_entreprise: payload.id_entreprise,
     },
     token,
   });

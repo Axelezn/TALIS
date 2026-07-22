@@ -1,0 +1,289 @@
+@use '../styles/abstracts' as *;
+@use 'sass:color';
+
+@mixin custom-badge($theme-color) {
+  background-color: rgba($theme-color, 0.12);
+  color: color.adjust($theme-color, $lightness: -20%);
+  border: 1px solid rgba($theme-color, 0.3);
+}
+
+.demandes-container {
+  min-height: calc(100vh - 80px);
+  background-color: $color-bg;
+  padding: 24px 16px 48px;
+  box-sizing: border-box;
+
+  @media (min-width: $tablet) {
+    padding: 32px 24px 56px;
+  }
+}
+
+.demandes-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.demandes-title {
+  font-family: $font-secondary;
+  @include responsive-font(24px, 30px);
+  font-weight: 800;
+  color: $color-text-main;
+  margin: 0 0 6px 0;
+}
+
+.demandes-subtitle {
+  font-family: $font-main;
+  font-size: 14px;
+  color: $color-text-light;
+  margin: 0 0 24px 0;
+}
+
+.demandes-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.demande-row {
+  &--header {
+    padding: 0 20px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+
+    .col {
+      font-family: $font-secondary;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      color: $color-text-light;
+      text-transform: uppercase;
+    }
+  }
+
+  &:not(&--header) {
+    @include card-style;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid rgba($color-text-main, 0.05);
+  }
+
+  &__summary {
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    text-align: left;
+    font-family: $font-main;
+    transition: background-color 0.15s ease;
+
+    &:hover { background-color: rgba($color-primary, 0.04); }
+  }
+
+  &.is-expanded &__summary {
+    background-color: rgba($color-primary, 0.05);
+  }
+
+  .col {
+    flex: 1;
+    min-width: 0;
+    font-size: 13px;
+    color: $color-text-main;
+    padding-right: 12px;
+
+    &--titre {
+      font-weight: 700;
+      font-family: $font-secondary;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &--info {
+      color: $color-text-light;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &--date {
+      color: $color-text-light;
+      flex: 0 0 120px;
+    }
+
+    &--statut {
+      flex: 0 0 140px;
+    }
+
+    &--chevron {
+      flex: 0 0 24px;
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+
+  .chevron-icon {
+    color: $color-text-light;
+    transition: transform 0.2s ease;
+  }
+
+  &.is-expanded .chevron-icon {
+    transform: rotate(180deg);
+    color: $color-primary;
+  }
+
+  &__details {
+    padding: 4px 20px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+
+    .detail-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-family: $font-main;
+      color: $color-text-light;
+
+      svg { color: $color-primary; flex-shrink: 0; }
+    }
+
+    .detail-actions {
+      margin-top: 6px;
+      padding-top: 12px;
+      border-top: 1px dashed rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      &__label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: $font-secondary;
+        font-size: 12px;
+        font-weight: 700;
+        color: $color-text-main;
+
+        svg { color: $color-primary; }
+      }
+
+      &__buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+    }
+  }
+}
+
+// Status badges (read-only pill, used both in the summary row and the action buttons)
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-family: $font-secondary;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+
+  &--pending { @include custom-badge(#f5a623); }
+  &--success { @include custom-badge(#10b981); }
+  &--danger  { @include custom-badge(#df4759); }
+}
+
+.status-pill {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 20px;
+  border: 1px solid transparent;
+  font-family: $font-main;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  background-color: #eef1f3;
+  color: $color-text-main;
+  transition: all 0.2s ease;
+
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  &--active.status-badge--pending { background-color: rgba(#f5a623, 0.18); border-color: rgba(#f5a623, 0.4); }
+  &--active.status-badge--success { background-color: rgba(#10b981, 0.18); border-color: rgba(#10b981, 0.4); }
+  &--active.status-badge--danger  { background-color: rgba(#df4759, 0.18); border-color: rgba(#df4759, 0.4); }
+}
+
+// Shared empty/error/loading states (mirrors OffresView styling)
+.empty-state {
+  @include card-style;
+  padding: 40px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 500px;
+  margin: 32px auto;
+
+  &__icon { color: $color-text-light; margin-bottom: 12px; }
+  h3 { font-family: $font-secondary; font-size: 16px; font-weight: 700; margin: 0 0 6px 0; color: $color-text-main; }
+  p { font-family: $font-main; font-size: 13px; color: $color-text-light; margin: 0; line-height: 1.45; }
+}
+
+.spinner {
+  width: 32px; height: 32px;
+  border: 3px solid rgba($color-primary, 0.15);
+  border-radius: 50%;
+  border-top-color: $color-primary;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.form-alert {
+  padding: 10px 14px;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-family: $font-main;
+  font-size: 13px;
+  margin-bottom: 16px;
+  line-height: 1.4;
+
+  &--error {
+    background-color: rgba(#df4759, 0.06); color: #df4759; border: 1px solid rgba(#df4759, 0.12);
+  }
+}
+
+// Mobile: stack columns instead of a rigid row
+@media (max-width: $tablet) {
+  .demande-row--header { display: none; }
+
+  .demande-row__summary {
+    flex-wrap: wrap;
+    gap: 6px 0;
+
+    .col {
+      flex: 0 0 100%;
+      padding-right: 0;
+    }
+
+    .col--chevron {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+    }
+  }
+
+  .demande-row:not(.demande-row--header) {
+    position: relative;
+  }
+}

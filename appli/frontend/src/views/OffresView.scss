@@ -12,13 +12,16 @@
   min-height: calc(100vh - 80px);
   background-color: $color-bg;
   padding: 24px 16px;
-  max-width: 1200px;
-  margin: 0 auto;
   box-sizing: border-box;
 
   @media (min-width: $tablet) {
     padding: 32px 24px;
   }
+}
+
+.offres-inner {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 // 1. HERO BANNER
@@ -575,6 +578,17 @@
         position: absolute; left: 12px; color: $color-text-light; display: flex; align-items: center;
       }
       input { width: 100%; padding-left: 32px; }
+    }
+
+    .readonly-field {
+      @include form-input-base;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background-color: #f5f6f7;
+      color: $color-text-light;
+
+      svg { color: $color-primary; flex-shrink: 0; }
     }
   }
 }

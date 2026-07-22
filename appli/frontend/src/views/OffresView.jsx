@@ -8,26 +8,28 @@ import {
   Trash2, 
   Edit, 
   X, 
-  FileText, 
-  Send, 
-  Info, 
-  Filter, 
-  CheckCircle2, 
-  Upload, 
+  FileText,
+  Send,
+  Filter,
+  Upload,
   ArrowLeft, 
-  User, 
+  User,
   MapPin,
   ChevronRight,
   Building
 } from 'lucide-react';
 import { getOffres, createOffre, updateOffre, deleteOffre } from '../services/offreService';
+import { getEntrepriseById } from '../services/entrepriseService';
+import { createDemande } from '../services/demandeService';
 import Button from '../components/common/Button/Button';
+import { toast } from '../components/common/Toast/toast';
 import './OffresView.scss';
 
 export default function OffresView() {
   // Authentication status
   const [currentUser, setCurrentUser] = useState(null);
   const [token, setToken] = useState(null);
+  const [recruiterEntreprise, setRecruiterEntreprise] = useState(null); // { nom, ville } de l'entreprise du recruteur connecté
 
   // Offers lists & filters state
   const [offres, setOffres] = useState([]);
@@ -41,7 +43,6 @@ export default function OffresView() {
   const [selectedOffre, setSelectedOffre] = useState(null); // for detail modal/drawer
   const [isApplying, setIsApplying] = useState(false); // mock apply process state
   const [applyForm, setApplyForm] = useState({ cvUploaded: false, lmText: '' });
-  const [applyNotification, setApplyNotification] = useState('');
 
   // Form states for creating & updating
   const [formOffer, setFormOffer] = useState({
@@ -52,10 +53,8 @@ export default function OffresView() {
     date_send: '',
     date_stop: '',
     description: '',
-    entreprise: '',
+    id_entreprise: null,
   });
-  const [formError, setFormError] = useState('');
-  const [formSuccess, setFormSuccess] = useState('');
 
   // Sync user authentications
   useEffect(() => {
@@ -69,7 +68,7 @@ export default function OffresView() {
           setCurrentUser(parsed);
           setFormOffer(prev => ({
             ...prev,
-            entreprise: prev.entreprise || parsed.company_name || parsed.nom || ''
+            id_entreprise: prev.id_entreprise || parsed.id_entreprise || null
           }));
         } catch {
           setCurrentUser(null);
@@ -82,6 +81,21 @@ export default function OffresView() {
     window.addEventListener('storage', syncUser);
     return () => window.removeEventListener('storage', syncUser);
   }, []);
+
+  // Fetch de l'entreprise du recruteur connecté, pour affichage en lecture seule dans le formulaire
+  useEffect(() => {
+    if (currentUser?.role === 'entreprise' && currentUser?.id_entreprise) {
+      getEntrepriseById(currentUser.id_entreprise)
+        .then((entreprise) => setRecruiterEntreprise(entreprise))
+        .catch((err) => {
+          console.error('Fetch recruiter entreprise error:', err);
+          toast.error('Impossible de récupérer les informations de votre entreprise.');
+          setRecruiterEntreprise(null);
+        });
+    } else {
+      setRecruiterEntreprise(null);
+    }
+  }, [currentUser]);
 
   // Fetch all offers on mount or when active tab reverts to list
   useEffect(() => {
@@ -108,45 +122,43 @@ export default function OffresView() {
   // Handle offer submission (create or update)
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    setFormError('');
-    setFormSuccess('');
 
     // Form inputs validation parameters
     if (!formOffer.titre.trim()) {
-      setFormError('Le titre de l\'offre est obligatoire.');
+      toast.error('Le titre de l\'offre est obligatoire.');
       return;
     }
     if (!formOffer.type) {
-      setFormError('Le type d\'offre est obligatoire.');
+      toast.error('Le type d\'offre est obligatoire.');
       return;
     }
     if (formOffer.date_send && formOffer.date_stop && new Date(formOffer.date_stop) < new Date(formOffer.date_send)) {
-      setFormError('La date de fin doit être supérieure ou égale à la date de début.');
+      toast.error('La date de fin doit être supérieure ou égale à la date de début.');
       return;
     }
     if (!formOffer.description.trim()) {
-      setFormError('La description détaillée est obligatoire.');
+      toast.error('La description détaillée est obligatoire.');
+      return;
+    }
+    if (!formOffer.id_entreprise) {
+      toast.error('Impossible de déterminer votre entreprise. Reconnectez-vous puis réessayez.');
       return;
     }
 
     try {
       if (activeTab === 'edit' && formOffer.id_offre) {
         await updateOffre(formOffer.id_offre, formOffer, token);
-        setFormSuccess('L\'offre a été mise à jour avec succès !');
+        toast.success('L\'offre a été mise à jour avec succès !');
       } else {
         await createOffre(formOffer, token);
-        setFormSuccess('L\'offre a été publiée avec succès !');
+        toast.success('L\'offre a été publiée avec succès !');
       }
 
-      // Reset form after successful submission and return to list after short delay
-      setTimeout(() => {
-        resetForm();
-        setActiveTab('list');
-      }, 1500);
-
+      resetForm();
+      setActiveTab('list');
     } catch (err) {
       console.error('Submit offer error:', err);
-      setFormError(err.message || 'Une erreur est survenue lors de l\'enregistrement.');
+      toast.error(err.message || 'Une erreur est survenue lors de l\'enregistrement.');
     }
   };
 
@@ -159,10 +171,8 @@ export default function OffresView() {
       date_send: '',
       date_stop: '',
       description: '',
-      entreprise: currentUser?.company_name || currentUser?.nom || '',
+      id_entreprise: currentUser?.id_entreprise || null,
     });
-    setFormError('');
-    setFormSuccess('');
   };
 
   // Open edit view
@@ -186,7 +196,7 @@ export default function OffresView() {
       date_send: formatDateInput(offre.date_send),
       date_stop: formatDateInput(offre.date_stop),
       description: offre.description || '',
-      entreprise: offre.entreprise || '',
+      id_entreprise: offre.id_entreprise || currentUser?.id_entreprise || null,
     });
     setActiveTab('edit');
     setSelectedOffre(null);
@@ -200,12 +210,13 @@ export default function OffresView() {
 
     try {
       await deleteOffre(idOffre, token);
+      toast.success('Offre supprimée avec succès.');
       fetchOffers();
       if (selectedOffre?.id_offre === idOffre) {
         setSelectedOffre(null);
       }
     } catch (err) {
-      alert(err.message || 'Une erreur est survenue lors de la suppression.');
+      toast.error(err.message || 'Une erreur est survenue lors de la suppression.');
     }
   };
 
@@ -214,20 +225,32 @@ export default function OffresView() {
     setApplyForm(prev => ({ ...prev, cvUploaded: true }));
   };
 
-  // Trigger submitting candidature mock
-  const submitCandidature = (e) => {
+  // Submit real candidature (demande) to the backend
+  const submitCandidature = async (e) => {
     e.preventDefault();
     if (!applyForm.cvUploaded) {
-      alert('Veuillez sélectionner un CV (PDF ou DOCX).');
+      toast.warning('Veuillez sélectionner un CV (PDF ou DOCX).');
       return;
     }
-    setApplyNotification('Félicitations ! Votre candidature est prête. Cependant, l\'envoi effectif en ligne est temporairement désactivé pour cette offre de démonstration.');
-    setTimeout(() => {
-      setApplyNotification('');
+    if (!currentUser?.id) {
+      toast.error('Vous devez être connecté en tant que candidat pour postuler.');
+      return;
+    }
+
+    try {
+      await createDemande({ id_user: currentUser.id, id_offre: selectedOffre.id_offre }, token);
+      toast.success('Votre candidature a bien été envoyée ! Vous pouvez suivre son statut dans l\'onglet "Demandes".');
       setIsApplying(false);
       setSelectedOffre(null);
       setApplyForm({ cvUploaded: false, lmText: '' });
-    }, 6000);
+    } catch (err) {
+      console.error('Submit candidature error:', err);
+      toast.error(
+        err.message === 'Une demande existe déjà pour ce user et cette offre.'
+          ? 'Vous avez déjà postulé à cette offre.'
+          : (err.message || 'Une erreur est survenue lors de l\'envoi de votre candidature.')
+      );
+    }
   };
 
   // Format dates for display
@@ -262,7 +285,8 @@ export default function OffresView() {
 
   return (
     <div className="offres-container" id="offers-main-view">
-      
+      <div className="offres-inner">
+
       {/* 1. Header Section */}
       <section className="offres-hero" id="offers-banner">
         <div className="offres-hero__content">
@@ -314,20 +338,6 @@ export default function OffresView() {
                 <p>Complétez les informations suivantes pour diffuser votre annonce.</p>
               </div>
 
-              {formError && (
-                <div className="form-alert form-alert--error" role="alert">
-                  <span className="form-alert__icon">&#9888;</span>
-                  <div className="form-alert__content">{formError}</div>
-                </div>
-              )}
-
-              {formSuccess && (
-                <div className="form-alert form-alert--success" role="alert">
-                  <CheckCircle2 size={18} className="form-alert__icon" />
-                  <div className="form-alert__content">{formSuccess}</div>
-                </div>
-              )}
-
               <form onSubmit={handleFormSubmit} className="offre-form" id="recruiter-post-form">
                 
                 <div className="form-row">
@@ -345,16 +355,15 @@ export default function OffresView() {
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="form-entreprise">Nom de l'entreprise *</label>
-                    <input
-                      type="text"
-                      id="form-entreprise"
-                      name="entreprise"
-                      placeholder="e.g. TALIS ou Nom Entreprise"
-                      value={formOffer.entreprise}
-                      onChange={(e) => setFormOffer({ ...formOffer, entreprise: e.target.value })}
-                      required
-                    />
+                    <label>Entreprise</label>
+                    <div className="readonly-field">
+                      <Building size={16} />
+                      <span>
+                        {recruiterEntreprise?.nom
+                          ? `${recruiterEntreprise.nom}${recruiterEntreprise.ville ? ` — ${recruiterEntreprise.ville}` : ''}`
+                          : 'Chargement…'}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -567,8 +576,14 @@ export default function OffresView() {
                               <span>{offre.entreprise}</span>
                             </div>
                           )}
-                          
+
                           <div className="job-card__metadata">
+                            {offre.localisation && (
+                              <div className="meta-item">
+                                <MapPin size={14} />
+                                <span>{offre.localisation}</span>
+                              </div>
+                            )}
                             {offre.remuneration && (
                               <div className="meta-item">
                                 <DollarSign size={14} />
@@ -601,6 +616,8 @@ export default function OffresView() {
             )}
           </div>
         )}
+
+      </div>
 
       </div>
 
@@ -649,6 +666,12 @@ export default function OffresView() {
                     <Briefcase size={16} />
                     <span>Contrat : {selectedOffre.type}</span>
                   </div>
+                  {selectedOffre.localisation && (
+                    <div className="tag-element">
+                      <MapPin size={16} />
+                      <span>Localisation : {selectedOffre.localisation}</span>
+                    </div>
+                  )}
                   {selectedOffre.remuneration && (
                     <div className="tag-element">
                       <DollarSign size={16} />
@@ -714,13 +737,6 @@ export default function OffresView() {
                 <p className="intro-text">
                   Détaillez votre candidature ci-dessous. Le recruteur la recevra directement avec votre profil TALIS.
                 </p>
-
-                {applyNotification && (
-                  <div className="form-alert form-alert--info animate-fade-in" role="alert">
-                    <Info size={18} className="form-alert__icon" />
-                    <div className="form-alert__content">{applyNotification}</div>
-                  </div>
-                )}
 
                 <form onSubmit={submitCandidature} className="apply-form" id="student-submit-candidature">
                   

@@ -1,12 +1,18 @@
 import { BaseRepository } from '../../../core/BaseRepository.js';
 import { OffreEntity } from '../entities/OffreEntity.js';
 
+const SELECT_FIELDS = `
+  o.id_offre, o.type, o.titre, o.id_entreprise, o.date_send, o.date_stop, o.remuneration, o.description,
+  e.nom AS entreprise, e.ville AS localisation
+`;
+
 export class OffreRepository extends BaseRepository {
   async getAll() {
     const [rows] = await this.db.execute(
-      `SELECT id_offre, type, titre, date_send, date_stop, remuneration, description, entreprise
-       FROM offre
-       ORDER BY id_offre DESC`
+      `SELECT ${SELECT_FIELDS}
+       FROM offre o
+       LEFT JOIN entreprise e ON e.id_entreprise = o.id_entreprise
+       ORDER BY o.id_offre DESC`
     );
 
     return rows.map((row) => new OffreEntity(row));
@@ -14,9 +20,10 @@ export class OffreRepository extends BaseRepository {
 
   async getById(idOffre) {
     const [rows] = await this.db.execute(
-      `SELECT id_offre, type, titre, date_send, date_stop, remuneration, description, entreprise
-       FROM offre
-       WHERE id_offre = ?`,
+      `SELECT ${SELECT_FIELDS}
+       FROM offre o
+       LEFT JOIN entreprise e ON e.id_entreprise = o.id_entreprise
+       WHERE o.id_offre = ?`,
       [idOffre]
     );
 
@@ -30,16 +37,16 @@ export class OffreRepository extends BaseRepository {
   async create(entity) {
     const payload = entity.toJSON();
     const [result] = await this.db.execute(
-      `INSERT INTO offre (type, titre, date_send, date_stop, remuneration, description, entreprise)
+      `INSERT INTO offre (type, titre, id_entreprise, date_send, date_stop, remuneration, description)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [
         payload.type,
         payload.titre,
+        payload.id_entreprise,
         payload.date_send,
         payload.date_stop,
         payload.remuneration,
         payload.description,
-        payload.entreprise,
       ]
     );
 
@@ -50,16 +57,16 @@ export class OffreRepository extends BaseRepository {
     const payload = entity.toJSON();
     await this.db.execute(
       `UPDATE offre
-       SET type = ?, titre = ?, date_send = ?, date_stop = ?, remuneration = ?, description = ?, entreprise = ?
+       SET type = ?, titre = ?, id_entreprise = ?, date_send = ?, date_stop = ?, remuneration = ?, description = ?
        WHERE id_offre = ?`,
       [
         payload.type,
         payload.titre,
+        payload.id_entreprise,
         payload.date_send,
         payload.date_stop,
         payload.remuneration,
         payload.description,
-        payload.entreprise,
         idOffre,
       ]
     );

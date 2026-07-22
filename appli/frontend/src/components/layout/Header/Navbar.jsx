@@ -114,6 +114,7 @@ const Navbar = () => {
           <ul className="nav-desktop__links">
             <li><Link to="/">Accueil</Link></li>
             <li><Link to="/offres">Offres</Link></li>
+            {isAuthenticated && <li><Link to="/demandes">Demandes</Link></li>}
             <li><Link to="/profil">Mon Profil</Link></li>
           </ul>
 
@@ -228,8 +229,9 @@ const Navbar = () => {
           <ul className="mobile-overlay__links">
             <li><Link to="/" onClick={() => setIsOpen(false)}>Accueil</Link></li>
             <li><Link to="/offres" onClick={() => setIsOpen(false)}>Offres</Link></li>
+            {isAuthenticated && <li><Link to="/demandes" onClick={() => setIsOpen(false)}>Demandes</Link></li>}
             <li><Link to="/profil" onClick={() => setIsOpen(false)}>Mon Profil</Link></li>
-            
+
             {!isAuthenticated ? (
               <>
                 <li className="sep"></li>
