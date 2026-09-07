@@ -10,6 +10,7 @@ import RegisterView from './views/RegisterView';
 import ProfileView from './views/ProfileView';
 import OffresView from './views/OffresView';
 import DemandesView from './views/DemandesView';
+import CandidatView from './views/CandidatView';
 
 // Composant pour le contenu de ta page d'accueil
 const Home = () => {
@@ -34,6 +35,7 @@ function App() {
         <Route path="/offres" element={<OffresView />} />
         <Route path="/demandes" element={<DemandesView />} />
 
+        <Route path="/candidats/:id" element={<CandidatView />} />
         <Route path="/profil" element={<ProfileView />} />
         <Route path="/profile" element={<ProfileView />} />
         <Route path="/ProfileView" element={<ProfileView />} />
