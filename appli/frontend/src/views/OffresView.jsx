@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { 
   Briefcase, 
   Calendar, 
@@ -37,6 +38,14 @@ export default function OffresView() {
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState('Tous');
+
+  const [searchParams] = useSearchParams();
+  useEffect(() => {
+    const q = searchParams.get('q');
+    const type = searchParams.get('type');
+    if (q) setSearchQuery(q);
+    if (type && ['Stage', 'Alternance', 'Tous'].includes(type)) setSelectedType(type);
+  }, [searchParams]);
 
   // Interactive UI views state
   const [activeTab, setActiveTab] = useState('list'); // 'list' | 'create' | 'edit'
@@ -101,6 +110,14 @@ export default function OffresView() {
   useEffect(() => {
     fetchOffers();
   }, [activeTab]);
+
+  // Open specific offer from ?id= URL param (e.g. coming from hero search)
+  useEffect(() => {
+    const id = searchParams.get('id');
+    if (!id || offres.length === 0) return;
+    const found = offres.find((o) => String(o.id_offre) === id);
+    if (found) setSelectedOffre(found);
+  }, [searchParams, offres]);
 
   const fetchOffers = async () => {
     setLoading(true);

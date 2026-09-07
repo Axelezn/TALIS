@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ChevronDown, MapPin, Calendar, Briefcase, Building, User, Mail, Inbox, MessageCircle } from 'lucide-react';
 import { getDemandesByUser, getDemandesByEntreprise, updateDemandeStatut } from '../services/demandeService';
 import { toast } from '../components/common/Toast/toast';
@@ -14,9 +14,16 @@ export default function DemandesView() {
   const [token, setToken] = useState(null);
 
   const [demandes, setDemandes] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [expandedIds, setExpandedIds] = useState(new Set());
+
+  const [searchParams] = useSearchParams();
+  useEffect(() => {
+    const q = searchParams.get('q');
+    if (q) setSearchQuery(q);
+  }, [searchParams]);
   const [statutUpdating, setStatutUpdating] = useState(null);
   const [chatDemande, setChatDemande] = useState(null);
 
@@ -44,6 +51,20 @@ export default function DemandesView() {
   }, [currentUser]);
 
   const isRecruiter = currentUser?.role === 'entreprise';
+
+  const filteredDemandes = demandes.filter((d) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    if (isRecruiter) {
+      return `${d.candidat_prenom || ''} ${d.candidat_nom || ''}`.toLowerCase().includes(q)
+        || (d.candidat_mail || '').toLowerCase().includes(q)
+        || (d.titre || '').toLowerCase().includes(q);
+    }
+    return (d.titre || '').toLowerCase().includes(q)
+      || (d.entreprise || '').toLowerCase().includes(q)
+      || (d.type || '').toLowerCase().includes(q)
+      || (d.localisation || '').toLowerCase().includes(q);
+  });
 
   const fetchDemandes = async () => {
     setLoading(true);
@@ -113,6 +134,18 @@ export default function DemandesView() {
           : 'Suivez le statut de vos candidatures envoyées.'}
       </p>
 
+      {!loading && !error && (
+        <div className="demandes-search">
+          <input
+            type="text"
+            className="demandes-search__input"
+            placeholder={isRecruiter ? "Rechercher un candidat, une offre..." : "Rechercher une offre, une entreprise..."}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+      )}
+
       {loading && (
         <div className="empty-state">
           <div className="spinner"></div>
@@ -127,19 +160,21 @@ export default function DemandesView() {
         </div>
       )}
 
-      {!loading && !error && demandes.length === 0 && (
+      {!loading && !error && filteredDemandes.length === 0 && (
         <div className="empty-state">
           <Inbox size={40} className="empty-state__icon" />
-          <h3>Aucune demande pour le moment</h3>
+          <h3>{searchQuery.trim() ? 'Aucun résultat' : 'Aucune demande pour le moment'}</h3>
           <p>
-            {isRecruiter
-              ? 'Vous n\'avez reçu aucune candidature sur vos offres pour l\'instant.'
-              : 'Vous n\'avez pas encore postulé à une offre. Rendez-vous sur la page Offres pour candidater.'}
+            {searchQuery.trim()
+              ? `Aucune correspondance pour "${searchQuery}".`
+              : isRecruiter
+                ? 'Vous n\'avez reçu aucune candidature sur vos offres pour l\'instant.'
+                : 'Vous n\'avez pas encore postulé à une offre. Rendez-vous sur la page Offres pour candidater.'}
           </p>
         </div>
       )}
 
-      {!loading && !error && demandes.length > 0 && (
+      {!loading && !error && filteredDemandes.length > 0 && (
         <div className="demandes-panel">
           <div className="demande-row demande-row--header">
             <span className="col col--titre">Nom offre</span>
@@ -149,7 +184,7 @@ export default function DemandesView() {
             <span className="col col--chevron"></span>
           </div>
 
-          {demandes.map((demande) => {
+          {filteredDemandes.map((demande) => {
             const isExpanded = expandedIds.has(demande.id_demande);
             return (
               <div key={demande.id_demande} className={`demande-row ${isExpanded ? 'is-expanded' : ''}`}>

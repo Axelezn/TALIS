@@ -308,7 +308,7 @@ export default function RegisterView() {
               <p className="required-note">* champs obligatoires !</p>
 
               <div className="form-actions">
-                <button type="button" className="btn-link" onClick={() => setStep(1)}>Retour</button>
+                <button type="button" className="btn-back" onClick={() => setStep(1)}>Retour</button>
                 <button type="submit" className="btn btn--primary" disabled={isSubmitting}>
                   {isSubmitting ? 'Creation...' : 'Creer mon compte'}
                 </button>
