@@ -331,14 +331,24 @@
 
 // 8. COMMENT ÇA MARCHE SECTION (GRID & CARDS)
 .how-it-works {
-  padding: 40px 20px;
-  width: 100%;
+  padding: 24px 20px 40px;
+  width: calc(100% - 32px);
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 0 16px 24px;
   background-color: $color-white;
+  border-radius: $radius-lg;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+
+  @media (min-width: $tablet) {
+    margin: 0 auto 24px;
+    width: calc(100% - 48px);
+  }
 
   @media (min-width: $desktop) {
-    padding: 60px 40px;
+    padding: 40px 40px 60px;
+    margin: 0 auto 32px;
+    width: calc(100% - 80px);
   }
 
   .section-title {
