@@ -156,12 +156,22 @@
       margin-top: 25px;
 
       .btn-back {
-        background: none;
-        border: none;
+        background: transparent;
+        border: 1.5px solid $color-border;
+        border-radius: $radius-lg;
         color: $color-text-light;
-        text-decoration: underline;
-        cursor: pointer;
         font-family: $font-secondary;
+        font-weight: $weight-semibold;
+        font-size: 0.95rem;
+        padding: 10px 24px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+
+        &:hover {
+          border-color: $color-primary;
+          color: $color-primary;
+          background: rgba($color-primary, 0.06);
+        }
       }
 
       .btn { width: auto; min-width: 180px; }
