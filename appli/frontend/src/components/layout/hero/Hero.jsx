@@ -93,10 +93,9 @@ export default function Hero() {
             <h3 className="card-label">Explorer les offres</h3>
           </div>
 
-          <div 
-            className="work-card" 
-            onClick={!isAuthenticated ? () => navigate("/login") : undefined}
-            style={isAuthenticated ? { cursor: "default" } : undefined}
+          <div
+            className="work-card"
+            onClick={() => navigate(isAuthenticated ? "/demandes" : "/login")}
           >
             <div className="card-icon card-icon--blue">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
