@@ -166,9 +166,23 @@
   align-items: center;
   padding-top: 5rem;
   transform: translateX(100%);
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  &.is-active { transform: translateX(0); }
-  &__close { position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: none; }
+  visibility: hidden; // RGAA : Empêche le focus sur le menu fermé
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.4s;
+
+  &.is-active {
+    transform: translateX(0);
+    visibility: visible;
+  }
+
+  &__close {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
   .white-card {
     background: white;
     padding: 1.2rem 2.5rem;
@@ -178,10 +192,24 @@
     box-shadow: $shadow-soft;
     img { height: 60px; }
   }
+
   &__links {
     list-style: none;
     text-align: center;
-    li { margin-bottom: 2.2rem; a { text-decoration: none; color: #1e1e1e; font-size: 1.6rem; font-weight: $weight-bold; } }
-    .sep { height: 1px; background: rgba(0, 0, 0, 0.1); width: 40%; margin: 1rem auto 2.5rem auto; }
+    li {
+      margin-bottom: 2.2rem;
+      a {
+        text-decoration: none;
+        color: #1e1e1e;
+        font-size: 1.6rem;
+        font-weight: $weight-bold;
+      }
+    }
+    .sep {
+      height: 1px;
+      background: rgba(0, 0, 0, 0.1);
+      width: 40%;
+      margin: 1rem auto 2.5rem auto;
+    }
   }
 }

@@ -1,3 +1,30 @@
 @use 'abstracts' as *;
 @use 'base';
 
+// Anneau de focus visible et contrasté (Critère RGAA 10.7)
+:focus-visible {
+  outline: 3px solid #2D3436;
+  outline-offset: 2px;
+}
+
+// Cible du hook usePageFocus sans contour disgracieux pour l'utilisateur souris
+#main-content:focus {
+  outline: none;
+}
+
+.skip-link {
+  position: absolute;
+  top: -9999px;
+  left: 10px;
+  background: #2D3436;
+  color: #FFFFFF;
+  padding: 8px 16px;
+  border-radius: 4px;
+  z-index: 9999;
+  text-decoration: none;
+  font-weight: 600;
+
+  &:focus {
+    top: 10px;
+  }
+}

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useId } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getOffres } from "../../../services/offreService";
 import { getUtilisateurs } from "../../../services/utilisateurService";
@@ -9,6 +9,7 @@ export default function Hero() {
   const location = useLocation();
   const navigate = useNavigate();
   const searchWrapperRef = useRef(null);
+  const searchListId = useId();
 
   const [isAuthenticated, setIsAuthenticated] = useState(Boolean(localStorage.getItem("talis_token")));
   const [currentUser, setCurrentUser] = useState(() => {
@@ -33,13 +34,9 @@ export default function Hero() {
 
   useEffect(() => {
     if (isRecruiter) {
-      getUtilisateurs()
-        .then(setRawData)
-        .catch(() => setRawData([]));
+      getUtilisateurs().then(setRawData).catch(() => setRawData([]));
     } else {
-      getOffres()
-        .then(setRawData)
-        .catch(() => setRawData([]));
+      getOffres().then(setRawData).catch(() => setRawData([]));
     }
   }, [isRecruiter]);
 
@@ -81,12 +78,22 @@ export default function Hero() {
     navigate(`/offres?type=${encodeURIComponent(tag)}`);
   };
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+    if (isRecruiter) {
+      navigate(`/candidats?search=${encodeURIComponent(searchQuery)}`);
+    } else {
+      navigate(`/offres?search=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
   return (
     <div className="hero-page-wrapper">
       <header className="hero-section">
         <div className="hero-container">
           <div className="hero-content">
-            <svg className="hero-chevron-overlay" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <svg className="hero-chevron-overlay" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
               <path d="M 100,0 L 100,100 L 15,58 Q 0,50 15,42 L 100,0 Z" fill="#FFFFFF" />
             </svg>
 
@@ -97,29 +104,36 @@ export default function Hero() {
             <p className="hero-subtitle">Mettre en relation talents ambitieux & entreprises innovantes</p>
 
             <div className="hero-search-wrapper" ref={searchWrapperRef}>
-              <div className="search-bar">
+              <form role="search" className="search-bar" onSubmit={handleSearchSubmit}>
+                <label htmlFor="hero-search-input" className="sr-only" style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', border: 0 }}>
+                  {isRecruiter ? "Rechercher un candidat" : "Rechercher une offre ou une entreprise"}
+                </label>
                 <input
-                  type="text"
+                  id="hero-search-input"
+                  type="search"
                   placeholder={isRecruiter ? "Rechercher un candidat..." : "Rechercher une offre, une entreprise..."}
                   className="search-input"
                   value={searchQuery}
                   onChange={(e) => { setSearchQuery(e.target.value); setShowDropdown(true); }}
                   onFocus={() => suggestions.length > 0 && setShowDropdown(true)}
                   onKeyDown={(e) => e.key === 'Escape' && setShowDropdown(false)}
+                  aria-expanded={showDropdown && suggestions.length > 0}
+                  aria-autocomplete="list"
+                  aria-controls={showDropdown && suggestions.length > 0 ? searchListId : undefined}
                 />
-                <button type="button" className="search-btn">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <button type="submit" className="search-btn" aria-label="Lancer la recherche">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true" focusable="false">
                     <circle cx="11" cy="11" r="8" />
                     <line x1="21" y1="21" x2="16.65" y2="16.65" />
                   </svg>
                 </button>
-              </div>
+              </form>
 
               {showDropdown && suggestions.length > 0 && (
-                <ul className="search-suggestions">
+                <ul id={searchListId} role="listbox" className="search-suggestions" aria-label="Suggestions de recherche">
                   {suggestions.map((item) => (
-                    <li key={isRecruiter ? item.id_user : item.id_offre} className="search-suggestions__item">
-                      <button type="button" onMouseDown={() => handleSuggestionClick(item)}>
+                    <li key={isRecruiter ? item.id_user : item.id_offre} className="search-suggestions__item" role="option">
+                      <button type="button" onClick={() => handleSuggestionClick(item)}>
                         {isRecruiter ? (
                           <>
                             <span className="suggestion-main">
@@ -144,7 +158,7 @@ export default function Hero() {
               )}
 
               {!isRecruiter && (
-                <div className="hero-tags">
+                <div className="hero-tags" role="group" aria-label="Filtres rapides">
                   {["Stage", "Alternance"].map((tag) => (
                     <button key={tag} type="button" className="tag-btn" onClick={() => handleTagClick(tag)}>
                       {tag}
@@ -156,44 +170,48 @@ export default function Hero() {
           </div>
 
           <div className="hero-image-box">
-            <img src={heroGroupImage} alt="Étudiants et recruteurs" className="hero-img" />
+            <img 
+              src={heroGroupImage} 
+              alt="Groupe d'étudiants souriants et recruteurs en échange professionnel" 
+              className="hero-img" 
+            />
           </div>
         </div>
       </header>
 
-      <section className="how-it-works">
-        <h2 className="section-title">Comment ça marche ?</h2>
+      <section className="how-it-works" aria-labelledby="how-it-works-title">
+        <h2 id="how-it-works-title" className="section-title">Comment ça marche ?</h2>
         <div className={`cards-grid ${isAuthenticated ? 'cards-grid--authenticated' : ''}`}>
 
           {!isAuthenticated && (
-            <div className="work-card" onClick={() => navigate("/register")}>
-              <div className="card-icon card-icon--purple">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <button type="button" className="work-card" onClick={() => navigate("/register")}>
+              <div className="card-icon card-icon--purple" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" focusable="false">
                   <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                   <circle cx="9" cy="7" r="4" />
                   <line x1="19" y1="8" x2="19" y2="14" />
                   <line x1="16" y1="11" x2="22" y2="11" />
                 </svg>
               </div>
-              <h3 className="card-label">Créer votre profil</h3>
-            </div>
+              <span className="card-label">Créer votre profil</span>
+            </button>
           )}
 
-          <div className="work-card" onClick={() => navigate("/offres")}>
-            <div className="card-icon card-icon--purple-blue">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <button type="button" className="work-card" onClick={() => navigate("/offres")}>
+            <div className="card-icon card-icon--purple-blue" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" focusable="false">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                 <polyline points="14 2 14 8 20 8" />
                 <circle cx="11.5" cy="14.5" r="2.5" />
                 <line x1="18" y1="21" x2="13.25" y2="16.25" />
               </svg>
             </div>
-            <h3 className="card-label">Explorer les offres</h3>
-          </div>
+            <span className="card-label">Explorer les offres</span>
+          </button>
 
-          <div className="work-card" onClick={() => navigate(isAuthenticated ? "/demandes" : "/login")}>
-            <div className="card-icon card-icon--blue">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <button type="button" className="work-card" onClick={() => navigate(isAuthenticated ? "/demandes" : "/login")}>
+            <div className="card-icon card-icon--blue" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" focusable="false">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                 <polyline points="14 2 14 8 20 8" />
                 <line x1="9" y1="15" x2="10" y2="15" />
@@ -203,8 +221,8 @@ export default function Hero() {
                 <path d="M8 19h8" />
               </svg>
             </div>
-            <h3 className="card-label">Gérer mes demandes</h3>
-          </div>
+            <span className="card-label">Gérer mes demandes</span>
+          </button>
 
         </div>
       </section>

@@ -213,3 +213,22 @@
   from { opacity: 0; transform: translateY(5px); }
   to { opacity: 1; transform: translateY(0); }
 }
+.auth-form {
+  .step-fieldset {
+    border: none;
+    margin: 0;
+    padding: 0;
+    min-inline-size: auto;
+  }
+
+  .step-legend {
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 0;
+  }
+
+  .custom-select:focus-visible {
+    outline: 3px solid #2D3436;
+    outline-offset: 2px;
+  }
+}

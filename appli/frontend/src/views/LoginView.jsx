@@ -18,9 +18,6 @@ export default function LoginView() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
 
-  // Ref (et non un state) car elle doit survivre au double-appel de l'effet
-  // fait par StrictMode en dev, qui sinon affiche ce toast deux fois avant
-  // que le navigate(replace) ci-dessous n'ait vidé location.state.
   const shownRedirectMessageRef = useRef(null);
 
   useEffect(() => {
@@ -43,10 +40,10 @@ export default function LoginView() {
 
     const newErrors = {};
     if (!formData.email.trim()) {
-      newErrors.email = 'le champ E-Mail est obligatoire';
+      newErrors.email = 'Le champ E-Mail est obligatoire';
     }
     if (!formData.password) {
-      newErrors.password = 'le champ Mot de passe est obligatoire';
+      newErrors.password = 'Le champ Mot de passe est obligatoire';
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -75,28 +72,38 @@ export default function LoginView() {
     <div className="auth-page">
       <div className="auth-card">
         <div className="brand">
-          <img src={talisLogoFull} alt="Talis Logo" className="logo" />
+          <img src={talisLogoFull} alt="TALIS - Accueil" className="logo" />
         </div>
 
         <div className="tabs-container">
-            <AuthToggle />
+          <AuthToggle />
         </div>
 
         <form className="auth-form" onSubmit={handleSubmit} noValidate>
           <div className="custom-select-group">
-            <label className="text-bold">
-              Profil <span style={{ color: '#E84118', marginLeft: '4px', fontWeight: 'bold' }}>*</span>
+            <label htmlFor="login-role-select" className="text-bold">
+              Profil de connexion <span className="required-asterisk" aria-hidden="true" style={{ color: '#E84118', marginLeft: '4px', fontWeight: 'bold' }}>*</span>
             </label>
-            <select name="role" className="custom-select" value={formData.role} onChange={handleChange}>
-              <option value="etudiant">Etudiant</option>
+            <select
+              id="login-role-select"
+              name="role"
+              className="custom-select"
+              value={formData.role}
+              onChange={handleChange}
+              required
+              aria-required="true"
+            >
+              <option value="etudiant">Étudiant</option>
               <option value="entreprise">Entreprise</option>
             </select>
           </div>
 
           <InputField
+            id="login-email"
             label="E-Mail"
             type="email"
             name="email"
+            autoComplete="email"
             placeholder="vous@talis.com"
             value={formData.email}
             onChange={handleChange}
@@ -105,9 +112,11 @@ export default function LoginView() {
           />
 
           <InputField
+            id="login-password"
             label="Mot de passe"
             type="password"
             name="password"
+            autoComplete="current-password"
             placeholder="********"
             value={formData.password}
             onChange={handleChange}
@@ -115,16 +124,28 @@ export default function LoginView() {
             error={errors.password}
           />
 
-          <p className="required-note">* champs obligatoires !</p>
+          <p className="required-note" aria-hidden="true">* champs obligatoires !</p>
 
           <button type="submit" className="btn btn--primary" disabled={isSubmitting}>
-            {isSubmitting ? 'Connexion...' : 'Se connecter'}
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '12px' }}>
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
+            {isSubmitting ? 'Connexion en cours...' : 'Se connecter'}
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{ marginLeft: '12px' }}
+              aria-hidden="true"
+              focusable="false"
+            >
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
             </svg>
           </button>
-          <br></br>
+
           <Link to="/forgot" className="forgot-password text-small">
             Mot de passe oublié ?
           </Link>
